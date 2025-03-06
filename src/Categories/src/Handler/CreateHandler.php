@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Handler\Categories;
+namespace Categories\Handler;
 
-use App\Model\CategoryModel;
-use App\Schema\Categories\CategorySave;
-use App\Filter\Categories\SaveFilter;
+use Categories\Model\CategoryModelInterface;
+use Categories\Schema\Categories\CategorySave;
+use Categories\Filter\Categories\SaveFilter;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -17,7 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CreateHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private CategoryModel $categoryModel,        
+        private CategoryModelInterface $categoryModel,        
         private DataManagerInterface $dataManager,
         private SaveFilter $filter,
         private Error $error,

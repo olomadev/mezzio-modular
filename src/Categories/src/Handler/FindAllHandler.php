@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Handler\Categories;
+namespace Categories\Handler;
 
-use App\Model\CategoryModel;
+use Categories\Model\CategoryModelInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,7 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FindAllHandler implements RequestHandlerInterface
 {
-    public function __construct(private CategoryModel $categoryModel)
+    public function __construct(private CategoryModelInterface $categoryModel)
     {
         $this->categoryModel = $categoryModel;
     }

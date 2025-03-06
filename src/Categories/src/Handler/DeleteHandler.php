@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Handler\Categories;
+namespace Categories\Handler;
 
-use App\Model\CategoryModel;
-use App\Filter\Categories\DeleteFilter;
+use Categories\Model\CategoryModelInterface;
+use Categories\Filter\DeleteFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class DeleteHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private CategoryModel $categoryModel,        
+        private CategoryModelInterface $categoryModel,        
         private DeleteFilter $filter,
         private Error $error,
     ) 

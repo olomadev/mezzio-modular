@@ -15,6 +15,7 @@ use Mezzio\Router\Middleware\MethodNotAllowedMiddleware;
 use Mezzio\Router\Middleware\RouteMiddleware;
 use Psr\Container\ContainerInterface;
 use Laminas\Diactoros\Response;
+use Common\Middleware\SetLocaleMiddleware;
 use Common\Middleware\JsonBodyParserMiddleware;
 
 /**
@@ -55,6 +56,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // Register the routing middleware in the middleware pipeline.
     // This middleware registers the Mezzio\Router\RouteResult request attribute.
     $app->pipe(RouteMiddleware::class);
+    $app->pipe(SetLocaleMiddleware::class);
     $app->pipe(JsonBodyParserMiddleware::class);
 
     // The following handle routing failures for common conditions:

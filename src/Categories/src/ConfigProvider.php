@@ -42,6 +42,12 @@ class ConfigProvider
             'factories'  => [
 
                 // models
+                Model\CategoryModelInterface::class => function ($container) {
+                    $dbAdapter = $container->get(AdapterInterface::class);
+                    $categories = new TableGateway('categories', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
+                    $cacheStorage = $container->get(StorageInterface::class);
+                    return new Model\CategoryModel($categories, $cacheStorage);
+                },
             ],
         ];
     }

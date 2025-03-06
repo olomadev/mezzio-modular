@@ -47,6 +47,7 @@ class ConfigProvider
             ],
             'factories'  => [
                 // middlewares
+                Middleware\SetLocaleMiddleware::class => Middleware\SetLocaleMiddlewareFactory::class,
                 Middleware\JsonBodyParserMiddleware::class => Middleware\JsonBodyParserMiddlewareFactory::class,
 
                 // other factories

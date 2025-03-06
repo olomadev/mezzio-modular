@@ -16,9 +16,7 @@ use Laminas\I18n\Translator\TranslatorInterface;
 
 class JsonBodyParserMiddleware implements MiddlewareInterface
 {
-    protected $translator;
-
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(private TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }

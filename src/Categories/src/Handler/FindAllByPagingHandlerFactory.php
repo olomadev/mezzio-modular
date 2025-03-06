@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Handler\Categories;
+namespace Categories\Handler;
 
-use App\Model\CategoryModel;
+use Categories\Model\CategoryModelInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -12,6 +12,6 @@ class FindAllByPagingHandlerFactory
 {
     public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
-        return new FindAllByPagingHandler($container->get(CategoryModel::class));
+        return new FindAllByPagingHandler($container->get(CategoryModelInterface::class));
     }
 }
