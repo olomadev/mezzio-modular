@@ -39,12 +39,12 @@ class JwtAuthenticationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {        
         try {
-            $user = $this->authentication->authenticationenticate($request);
+            $user = $this->authentication->authenticate($request);
 
             if (null !== $user) {
                 return $handler->handle($request->withAttribute(UserInterface::class, $user));
             }
-        } catch (ExpiredException $e) { // 401 Unauthenticationorized response
+        } catch (ExpiredException $e) { // 401 Unauthorized client response
             return new JsonResponse(
                 [
                     'data' => [
@@ -56,6 +56,6 @@ class JwtAuthenticationMiddleware implements MiddlewareInterface
                     ]
             );
         }
-        return $this->authentication->unauthenticationorizedResponse($request);
+        return $this->authentication->unauthorizedResponse($request);
     }
 }

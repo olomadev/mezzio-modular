@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
-use Authentication\Filter\Users\SaveFilter;
+use Users\Model\UserModelInterface;
+use Users\Filter\SaveFilter;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Psr\Container\ContainerInterface;
@@ -20,7 +20,7 @@ class UpdateHandlerFactory
         $inputFilter   = $pluginManager->get(PasswordSaveFilter::class);
 
         return new UpdateHandler(
-            $container->get(UserModel::class),
+            $container->get(UserModelInterface::class),
             $container->get(DataManagerInterface::class),
             $inputFilter,
             $container->get(ErrorWrapperInterface::class)

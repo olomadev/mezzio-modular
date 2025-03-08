@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Authorization\Model;
 
-use Laminas\Paginator\Paginator;
-
 interface RoleModelInterface
 {
     /**

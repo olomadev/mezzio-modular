@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Common;
 
+use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Cache\Storage\StorageInterface;
 use Predis\ClientInterface as PredisInterface;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\I18n\Translator\TranslatorInterface;
-use Laminas\ServiceManager\Factory\InvokableFactory;
+// use Laminas\ServiceManager\Factory\InvokableFactory;
 
 /**
  * The configuration provider for the Authorization module
@@ -55,6 +56,21 @@ class ConfigProvider
                 SimpleCacheInterface::class => Factory\SimpleCacheFactory::class,   
                 PredisInterface::class => Factory\PredisFactory::class,
                 EventManagerInterface::class => Factory\EventManagerFactory::class,
+
+                // models
+                
+                Model\CommonModelInterface::class => function ($container) {
+                    $config = $container->get('config');
+                    $dbAdapter = $container->get(AdapterInterface::class);
+                    $cacheStorage = $container->get(StorageInterface::class);
+                    return new Model\CommonModel($dbAdapter, $cacheStorage, $config);
+                },
+                Model\FileModelInterface::class => function ($container) {
+                    $dbAdapter = $container->get(AdapterInterface::class);
+                    $employeeFiles = new TableGateway('employeeFiles', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
+                    return new Model\FileModel($dbAdapter, $employeeFiles);
+                },
+
             ],
         ];
     }

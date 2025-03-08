@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Authentication\Handler;
 
-use Authentication\Model\TokenModel;
-use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
+use Authentication\Model\TokenModelInterface;
+use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Mezzio\Authentication\AuthenticationInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -19,8 +19,8 @@ class RefreshHandlerFactory
             $container->get('config'), 
             $container->get(TranslatorInterface::class), 
             $container->get(AuthenticationInterface::class), 
-            $container->get(TokenModel::class), 
-            $container->get(Error::class)
+            $container->get(TokenModelInterface::class), 
+            $container->get(ErrorWrapperInterface::class)
         );
     }
 }

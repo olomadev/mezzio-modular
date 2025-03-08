@@ -1,5 +1,7 @@
 <?php
 return [
     'Authentication',
-    'Authorization'
+    'Authorization',
+    'Users',
+    'Categories'
 ];

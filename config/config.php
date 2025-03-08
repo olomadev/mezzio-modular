@@ -13,6 +13,10 @@ $cacheConfig = [
 
 // Let's merge the configuration with ConfigAggregator
 $aggregator = new ConfigAggregator([
+  \Olobase\Mezzio\ConfigProvider::class,
+  \Mezzio\Authorization\ConfigProvider::class,
+  \Categories\ConfigProvider::class,
+  \Users\ConfigProvider::class,
   \Laminas\Serializer\ConfigProvider::class,
   \Laminas\Cache\ConfigProvider::class,
   \Laminas\Cache\Storage\Adapter\Redis\ConfigProvider::class,
@@ -44,8 +48,6 @@ $aggregator = new ConfigAggregator([
       : function (): array {
           return [];
       },
-   // Olobase components
-  \Olobase\Mezzio\ConfigProvider::class,
   // Common config provider
   Common\ConfigProvider::class,
   // Load application configurations in a specific order

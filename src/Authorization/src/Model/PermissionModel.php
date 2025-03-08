@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Authorization\Model;
 
 use Exception;
-use Olobase\Mezzio\ColumnFiltersInterface;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Expression;
 use Laminas\Paginator\Paginator;
@@ -12,20 +11,18 @@ use Laminas\Paginator\Adapter\DbSelect;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Db\TableGateway\TableGatewayInterface;
+use Olobase\Mezzio\ColumnFiltersInterface;
 use Olobase\Mezzio\Authorization\PermissionModelInterface;
 
 class PermissionModel implements PermissionModelInterface
 {
     private $conn;
-    private $cache;
     private $adapter;
-    private $permissions;
-    private $columnFilters;
 
     public function __construct(
-        TableGatewayInterface $permissions,
-        StorageInterface $cache,
-        ColumnFiltersInterface $columnFilters
+        private TableGatewayInterface $permissions,
+        private StorageInterface $cache,
+        private ColumnFiltersInterface $columnFilters
     )
     {
         $this->cache = $cache;

@@ -60,7 +60,7 @@ class JsonHelper
      * @param  array  $items   data
      * @return array
      */
-    public static function paginatorJsonDecode(array $items): array
+    public static function paginatorJsonDecode($items): array
     {
         if (empty($items)) {
             return [];

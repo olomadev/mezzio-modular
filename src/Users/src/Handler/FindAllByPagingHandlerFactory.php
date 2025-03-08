@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
+use Users\Model\UserModelInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -12,6 +12,6 @@ class FindAllByPagingHandlerFactory
 {
     public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
-        return new FindAllByPagingHandler($container->get(UserModel::class));
+        return new FindAllByPagingHandler($container->get(UserModelInterface::class));
     }
 }

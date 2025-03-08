@@ -79,14 +79,7 @@ class JwtAuthentication implements AuthenticationInterface
         $this->tokenModel = $tokenModel;
         $this->roleModel = $roleModel;
         $this->events = $events;
-        $this->userFactory = function (
-            string $id,
-            string $identity,
-            array $roles = [],
-            array $details = []
-        ) use ($userFactory) : UserInterface {
-            return $userFactory($id, $identity, $roles, $details);
-        };
+        $this->userFactory = $userFactory;
         $this->ipAddress = RequestHelper::getRealUserIp();
     }
 
@@ -101,7 +94,7 @@ class JwtAuthentication implements AuthenticationInterface
         }
         $payload = $this->getPayload()['data'];
         $data = (array)$payload;
-        return ($this->userFactory)($data['userId'], $data['identity'], $data['roles'], (array)$data['details']);
+        return ($this->userFactory)($data['details']->email, (array)$data['roles'], (array)$data['details']);
     }
 
     public function createUser(ServerRequestInterface $request) : ?UserInterface
@@ -131,13 +124,12 @@ class JwtAuthentication implements AuthenticationInterface
 
         if ($this->checkUserInactive()) {
             return null;
-
         }
         $roles = $this->checkUserHasRole();
         if (!$roles) {
             return null;
         }
-        return ($this->userFactory)($this->rowObject->userId, $result->getIdentity(), $roles, $this->getUserDetails());
+        return ($this->userFactory)($result->getIdentity(), (array)$roles, $this->getUserDetails());
     }
 
     private function checkUserInactive() : bool
@@ -200,9 +192,10 @@ class JwtAuthentication implements AuthenticationInterface
         ];
     }
 
-    private function getUserDetails()
+    private function getUserDetails() : array
     {
         return [
+            'id' => $this->rowObject->userId,
             'email' => $this->rowObject->email,
             'fullname' => (string)$this->rowObject->firstname.' '.(string)$this->rowObject->lastname,
             'avatar' => $this->rowObject->avatar 

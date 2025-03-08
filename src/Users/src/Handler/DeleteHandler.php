@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
-use Authentication\Filter\Users\DeleteFilter;
+use Users\Model\UserModelInterface;
+use Users\Filter\DeleteFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;

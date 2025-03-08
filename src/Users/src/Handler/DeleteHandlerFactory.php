@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
-use Authentication\Filter\Users\DeleteFilter;
+use Users\Model\UserModelInterface;
+use Users\Filter\DeleteFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -19,7 +19,7 @@ class DeleteHandlerFactory
         $inputFilter   = $pluginManager->get(DeleteFilter::class);
 
         return new DeleteHandler(
-            $container->get(UserModel::class),
+            $container->get(UserModelInterface::class),
             $inputFilter,
             $container->get(ErrorWrapperInterface::class)
         );

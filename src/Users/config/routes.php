@@ -17,7 +17,7 @@ return function (Application $app, ContainerInterface $container) {
     $app->route('/api/users/update/:userId', [...$auth, [Users\Handler\UpdateHandler::class]], ['PUT']);
     $app->route('/api/users/delete/:userId', [...$auth, [Users\Handler\DeleteHandler::class]], ['DELETE']);
     $app->route('/api/users/updatePassword/:userId', [...$auth, [Users\Handler\UpdatePasswordHandler::class]], ['PUT']);
-    $app->route('/api/users/findAll', [...$auth, [Users\Handler\Users\FindAllHandler::class]], ['GET']);
+    $app->route('/api/users/findAll', [...$auth, [Users\Handler\FindAllHandler::class]], ['GET']);
     $app->route('/api/users/findAllByPaging', [...$auth, [Users\Handler\FindAllByPagingHandler::class]], ['GET']);
     $app->route('/api/users/findOneById/:userId', [...$auth, [Users\Handler\FindOneByIdHandler::class]], ['GET']);
 

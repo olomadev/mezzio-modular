@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Mezzio\Authenticationlication;
+use Mezzio\Application;
 use Psr\Container\ContainerInterface;
 use Authentication\Handler\SessionUpdateHandler;
 use Authentication\Middleware\JwtAuthenticationMiddleware;
 
-return function (Authenticationlication $app, ContainerInterface $container) {
+return function (Application $app, ContainerInterface $container) {
 
     // Auth (public)
     $app->route('/api/auth/token', Authentication\Handler\TokenHandler::class, ['POST']);

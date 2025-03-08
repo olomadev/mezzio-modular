@@ -68,9 +68,10 @@
         "mezzio/mezzio": "^3.7",
         "mezzio/mezzio-authentication": "^1.10",
         "mezzio/mezzio-authentication-laminasauthentication": "^1.7",
+        "mezzio/mezzio-authorization": "^1.10",
         "mezzio/mezzio-helpers": "^5.7",
         "mezzio/mezzio-laminasrouter": "^3.9.0",
-        "olobase/mezzio": "^1.2",
+        "olobase/mezzio": "^1.3",
         "predis/predis": "^2.3",
         "ramsey/uuid": "^4.7",
         "symfony/uid": "*",
@@ -87,9 +88,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Common\\": "src/Common",
+            "Common\\": "src/Common/src",
             "Authentication\\": "src/Authentication/src/",
-            "Authorization\\": "src/Authorization/src/"
+            "Authorization\\": "src/Authorization/src/",
+            "Users\\": "src/Users/src/",
+            "Categories\\": "src/Categories/src/"
         }
     },
     "autoload-dev": {

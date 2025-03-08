@@ -7,11 +7,12 @@ namespace Users;
 use Mezzio\Application;
 use Psr\Container\ContainerInterface;
 use Laminas\Cache\Storage\StorageInterface;
-use Olobase\Mezzio\ColumnFiltersInterface;
-use Olobase\Mezzio\Authorization\PermissionModelInterface;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\TableGateway\TableGateway;
+use Olobase\Mezzio\ColumnFiltersInterface;
+use Olobase\Mezzio\Authorization\PermissionModelInterface;
+use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 
 /**
  * The configuration provider for the Authorization module
@@ -40,6 +41,14 @@ class ConfigProvider
     {
         return [
             'factories'  => [
+
+                // handlers
+                Handler\CreateHandler::class => Handler\CreateHandlerFactory::class,
+                Handler\UpdateHandler::class => Handler\UpdateHandlerFactory::class,
+                Handler\DeleteHandler::class => Handler\DeleteHandlerFactory::class,
+                Handler\FindOneByIdHandler::class => Handler\FindOneByIdHandlerFactory::class,
+                Handler\FindAllHandler::class => Handler\FindAllHandlerFactory::class,
+                Handler\FindAllByPagingHandler::class => Handler\FindAllByPagingHandlerFactory::class,
 
                 // models
                 Model\UserModelInterface::class => function ($container) {

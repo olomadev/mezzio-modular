@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
-use Authentication\Filter\Users\SaveFilter;
+use Users\Model\UserModelInterface;
+use Users\Filter\SaveFilter;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Mezzio\Authentication\AuthenticationInterface;
@@ -22,7 +22,7 @@ class CreateHandlerFactory
         $inputFilter   = $pluginManager->get(SaveFilter::class);
 
         return new CreateHandler(
-            $container->get(UserModel::class),
+            $container->get(UserModelInterface::class),
             $container->get(DataManagerInterface::class),
             $inputFilter,
             $container->get(ErrorWrapperInterface::class)

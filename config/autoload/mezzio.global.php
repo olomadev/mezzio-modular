@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 return [
+    'data_manager' => [
+        'common_schema_module' => 'Common',
+    ],
     'authentication' => [
         'tablename' => 'users',
         'username' => 'email',

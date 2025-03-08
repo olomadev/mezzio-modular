@@ -85,8 +85,8 @@ class TokenModel implements TokenModelInterface
      */
     public function create(ServerRequestInterface $request)
     {
-        $user   = $request->getAttribute(UserInterface::class);
-        $userId = $user->getId();
+        $user = $request->getAttribute(UserInterface::class);
+        $userId = $user->getDetails()['id'];
         //
         // JWT header
         //
@@ -107,10 +107,9 @@ class TokenModel implements TokenModelInterface
             'nbf'  => $notBefore,        // Not before
             'exp'  => $expire,           // Expire
             'data' => [                  // Data related to the signer user
-                'userId' => $userId,     // userid from the users table
-                'identity' => $user->getIdentity(), // User identity can be email, username or phone
                 'roles' => $user->getRoles(),
                 'details' => [
+                    'id' => $userId,
                     'email' => $user->getDetail('email') ? $user->getDetail('email') : $user->getIdentity(), // User email
                     'fullname' => $user->getDetail('fullname'),
                     'ip' => $user->getDetail('ip'),
@@ -156,7 +155,7 @@ class TokenModel implements TokenModelInterface
     {
         $server = $request->getServerParams();
         $userAgent = empty($server['HTTP_USER_AGENT']) ? 'unknown' : $server['HTTP_USER_AGENT'];
-        $userId = $decoded['data']['userId'];
+        $userId = $decoded['data']['details']['id'];
         //
         // validate token session
         //

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Authentication\Handler;
 
 use Exception;
-use App\Model\TokenModel;
+use Authentication\Model\TokenModelInterface;
 use Firebase\JWT\ExpiredException;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -14,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Olobase\Mezzio\Authentication\JwtEncoderInterface as JwtEncoder;
 use Mezzio\Authentication\AuthenticationInterface;
-use Laminas\I18n\Translator\TranslatorInterface as Translator;
+use Laminas\I18n\Translator\TranslatorInterface;
 
 class RefreshHandler implements RequestHandlerInterface
 {
@@ -26,9 +26,9 @@ class RefreshHandler implements RequestHandlerInterface
 
     public function __construct(
         array $config,
-        private Translator $translator,
+        private TranslatorInterface $translator,
         private AuthenticationInterface $authentication,
-        private TokenModel $tokenModel,
+        private TokenModelInterface $tokenModel,
         private Error $error
     ) {
         $this->config = $config;
@@ -110,7 +110,7 @@ class RefreshHandler implements RequestHandlerInterface
                     'data' => [
                         'token' => $data['token'],
                         'user'  => [
-                            'id' => $data['data']['userId'],
+                            'id' => $details['id'],
                             'fullname' => $details['fullname'],
                             'email' => $details['email'],
                             'permissions' => $data['data']['roles'],

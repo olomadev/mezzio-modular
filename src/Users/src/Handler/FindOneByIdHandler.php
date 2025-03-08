@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
+use Users\Model\UserModelInterface;
+use Users\Schema\UsersFindOneById;
 use Olobase\Mezzio\DataManagerInterface;
-use Authentication\Schema\Users\UsersFindOneById;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class FindOneByIdHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private UserModel $userModel,
+        private UserModelInterface $userModel,
         private DataManagerInterface $dataManager
     )
     {

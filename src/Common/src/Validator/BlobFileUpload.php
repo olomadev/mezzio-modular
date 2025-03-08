@@ -5,6 +5,7 @@ namespace Common\Validator;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Laminas\Validator\Exception\InvalidArgumentException;
 use Laminas\Validator\AbstractValidator;
+
 /**
  * Validate file input string
  */

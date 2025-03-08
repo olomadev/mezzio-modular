@@ -56,7 +56,7 @@ class UserModel implements UserModelInterface
         return $select;
     }
 
-    public function findAllByPaging(array $get)
+    public function findAllByPaging(array $get) : Paginator
     {
         $select = $this->findAllBySelect();
         $this->columnFilters->clear();
@@ -134,8 +134,7 @@ class UserModel implements UserModelInterface
             $select,
             $this->adapter
         );
-        $paginator = new Paginator($paginatorAdapter);
-        return $paginator;
+        return new Paginator($paginatorAdapter);
     }
 
     public function findOneById(string $userId)

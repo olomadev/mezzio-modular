@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Authentication\Handler;
 
 use Exception;
-use Authentication\Model\TokenModel;
 use Firebase\JWT\ExpiredException;
+use Authentication\Model\TokenModelInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Laminas\I18n\Translator\TranslatorInterface as Translator;
+use Laminas\I18n\Translator\TranslatorInterface;
 
 class LogoutHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private Translator $translator,
-        private TokenModel $tokenModel
+        private TranslatorInterface $translator,
+        private TokenModelInterface $tokenModel
     ) {
         $this->translator = $translator;
         $this->tokenModel = $tokenModel;
@@ -61,9 +61,9 @@ class LogoutHandler implements RequestHandlerInterface
         $token = $this->tokenModel->getTokenEncrypt()->decrypt($token);
         try {
             $data = $this->tokenModel->decode($token);
-            if (! empty($data['data']->userId)) {
+            if (! empty($data['data']->details->id)) {
                 $this->tokenModel->kill( // delete the user from session db
-                    $data['data']->userId,
+                    $data['data']->details->id,
                     $data['data']->details->tokenId
                 ); 
             }
@@ -85,7 +85,7 @@ class LogoutHandler implements RequestHandlerInterface
             }
             if ($token) {
                 $this->tokenModel->kill( // delete the user from session db
-                    $token['data']['userId'],
+                    $token['data']['details']['id'],
                     $token['data']['details']['tokenId']
                 );
             }
@@ -99,7 +99,6 @@ class LogoutHandler implements RequestHandlerInterface
                 401
             );
         }
-
         return new JsonResponse([]);
     }
 

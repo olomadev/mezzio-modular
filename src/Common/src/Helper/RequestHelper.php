@@ -23,7 +23,7 @@ class RequestHelper
         }
         $domainArray = explode(".", str_replace('www.', '', $host));
         $count = count($domainArray);
-        if( $count >= 3 && strlen($domainArray[$count-2])==2 ) {
+        if ( $count >= 3 && strlen($domainArray[$count-2])==2 ) {
             // SLD (example.co.uk)
             return implode('.', array_splice($domainArray, $count-3,3));
         } else if ($count >= 2 ) {

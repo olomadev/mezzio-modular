@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
-use Authentication\Filter\Users\PasswordSaveFilter;
+use Users\Model\UserModelInterface;
+use Users\Filter\PasswordSaveFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class UpdatePasswordHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private UserModel $userModel,        
+        private UserModelInterface $userModel,        
         private PasswordSaveFilter $filter,
         private Error $error,
     ) 

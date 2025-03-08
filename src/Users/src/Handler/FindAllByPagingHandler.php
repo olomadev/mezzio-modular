@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Authentication\Handler\Users;
+namespace Users\Handler;
 
-use Authentication\Model\UserModel;
+use Common\Helper\JsonHelper;
+use Users\Model\UserModelInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,7 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FindAllByPagingHandler implements RequestHandlerInterface
 {
-    public function __construct(private UserModel $userModel)
+    public function __construct(private UserModelInterface $userModel)
     {
         $this->userModel = $userModel;
     }
@@ -90,7 +91,7 @@ class FindAllByPagingHandler implements RequestHandlerInterface
             'perPage' => $paginator->getItemCountPerPage(),
             'totalPages' => $paginator->count(),
             'totalItems' => $paginator->getTotalItemCount(),
-            'data' => paginatorJsonDecode($paginator->getCurrentItems()),
+            'data' => JsonHelper::paginatorJsonDecode($paginator->getCurrentItems()),
         ]);
     }
 
