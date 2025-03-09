@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class DeleteHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private UserModel $userModel,        
+        private UserModelInterface $userModel,        
         private DeleteFilter $filter,
         private Error $error,
     ) 

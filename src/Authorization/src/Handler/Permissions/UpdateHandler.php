@@ -23,18 +23,14 @@ class UpdateHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->permissionModel = $permissionModel;
-        $this->dataManager = $dataManager;
-        $this->error = $error;
-        $this->filter = $filter;
     }
     
     /**
      * @OA\Put(
-     *   path="/permissions/update/{permId}",
-     *   tags={"Permissions"},
+     *   path="/authorization/permissions/update/{permId}",
+     *   tags={"Authorization Permissions"},
      *   summary="Update a permission",
-     *   operationId="permissions_update",
+     *   operationId="authorizationPermissions_update",
      *
      *   @OA\RequestBody(
      *     description="Update a permission",

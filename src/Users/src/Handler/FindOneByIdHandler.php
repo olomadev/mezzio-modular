@@ -19,8 +19,6 @@ class FindOneByIdHandler implements RequestHandlerInterface
         private DataManagerInterface $dataManager
     )
     {
-        $this->userModel = $userModel;
-        $this->dataManager = $dataManager;
     }
 
     /**

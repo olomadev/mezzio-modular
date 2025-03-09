@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Authentication\Handler\FailedLogins;
 
-use Authentication\Model\FailedLoginModel;
+use Authentication\Model\FailedLoginModelInterface;
 use Authentication\Filter\FailedLogins\DeleteFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -15,14 +15,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 class DeleteHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private FailedLoginModel $failedLoginModel,        
+        private FailedLoginModelInterface $failedLoginModel,        
         private DeleteFilter $filter,
         private Error $error,
     ) 
     {
-        $this->failedLoginModel = $failedLoginModel;
-        $this->filter = $filter;
-        $this->error = $error;
     }
     
     /**

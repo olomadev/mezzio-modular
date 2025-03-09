@@ -14,7 +14,6 @@ class FindAllHandler implements RequestHandlerInterface
 {
     public function __construct(private CategoryModelInterface $categoryModel)
     {
-        $this->categoryModel = $categoryModel;
     }
 
     /**

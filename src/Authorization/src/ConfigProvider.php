@@ -47,6 +47,26 @@ class ConfigProvider
             ],
             'factories'  => [
 
+                // handlers - roles
+                Handler\Roles\CreateHandler::class => Handler\Roles\CreateHandlerFactory::class,
+                Handler\Roles\UpdateHandler::class => Handler\Roles\UpdateHandlerFactory::class,
+                Handler\Roles\DeleteHandler::class => Handler\Roles\DeleteHandlerFactory::class,
+                Handler\Roles\FindOneByIdHandler::class => Handler\Roles\FindOneByIdHandlerFactory::class,
+                Handler\Roles\FindAllHandler::class => Handler\Roles\FindAllHandlerFactory::class,
+                Handler\Roles\FindAllByPagingHandler::class => Handler\Roles\FindAllByPagingHandlerFactory::class,
+
+                // handlers - permissions
+                Handler\Permissions\CopyHandler::class => Handler\Permissions\CopyHandlerFactory::class,
+                Handler\Permissions\CreateHandler::class => Handler\Permissions\CreateHandlerFactory::class,
+                Handler\Permissions\UpdateHandler::class => Handler\Permissions\UpdateHandlerFactory::class,
+                Handler\Permissions\DeleteHandler::class => Handler\Permissions\DeleteHandlerFactory::class,
+                Handler\Permissions\FindAllHandler::class => Handler\Permissions\FindAllHandlerFactory::class,
+                Handler\Permissions\FindAllByPagingHandler::class => Handler\Permissions\FindAllByPagingHandlerFactory::class,
+
+                // handlers - common options
+                Handler\Actions\FindAllHandler::class => Handler\Actions\FindAllHandlerFactory::class,
+                Handler\Methods\FindAllHandler::class => Handler\Methods\FindAllHandlerFactory::class,
+
                 // models
                 Model\RoleModelInterface::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);

@@ -23,18 +23,14 @@ class CopyHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->permissionModel = $permissionModel;
-        $this->dataManager = $dataManager;
-        $this->error = $error;
-        $this->filter = $filter;
     }
     
     /**
      * @OA\Post(
-     *   path="/permissions/copy/{permId}",
-     *   tags={"Permissions"},
+     *   path="/authorization/permissions/copy/{permId}",
+     *   tags={"Authorization Permissions"},
      *   summary="Copy a permission",
-     *   operationId="permissions_copy",
+     *   operationId="authorizationPermissions_copy",
      *
      *   @OA\RequestBody(
      *     description="Create a new permission",

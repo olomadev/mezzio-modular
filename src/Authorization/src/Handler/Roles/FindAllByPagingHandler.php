@@ -15,15 +15,14 @@ class FindAllByPagingHandler implements RequestHandlerInterface
 {
     public function __construct(private RoleModelInterface $roleModel)
     {
-        $this->roleModel = $roleModel;
     }
 
     /**
      * @OA\Get(
-     *   path="/roles/findAllByPaging",
-     *   tags={"Roles"},
+     *   path="/authorization/roles/findAllByPaging",
+     *   tags={"Authorization Roles"},
      *   summary="Find all roles by pagination",
-     *   operationId="roles_findAllByPaging",
+     *   operationId="authorizationRoles_findAllByPaging",
      *
      *   @OA\Parameter(
      *       name="q",

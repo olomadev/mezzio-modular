@@ -24,18 +24,14 @@ class FindOneByIdHandler implements RequestHandlerInterface
         private Error $error
     )
     {
-        $this->filter = $filter;
-        $this->fileModel = $fileModel;
-        $this->translator = $translator;
-        $this->error = $error;
     }
 
     /**
      * @OA\Get(
-     *   path="/files/findOneById/{fileId}",
+     *   path="/common/files/findOneById/{fileId}",
      *   tags={"Common"},
-     *   summary="Find ",
-     *   operationId="files_findOne",
+     *   summary="Find a file by ID",
+     *   operationId="commonFiles_findOne",
      *
      *   @OA\Parameter(
      *       in="path",
@@ -46,47 +42,38 @@ class FindOneByIdHandler implements RequestHandlerInterface
      *           type="string",
      *       ),
      *   ),
-     *   @OA\Parameter(
-     *       in="query",
-     *       name="tableName",
-     *       required=true,
-     *       description="File tableName",
-     *       @OA\Schema(
-     *           type="string",
-     *       ),
-     *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Successful operation (File content returns to Base64 string)",
+     *     description="Successful operation (File content returned as Base64 string)",
      *   ),
+     *   @OA\Response(
+     *      response=404,
+     *      description="File not found"
+     *   )
      *)
      **/
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $queryParams = $request->getQueryParams();
-
         $get['fileId'] = $queryParams['id'];
-        $get['tableName'] = $queryParams['tableName'];
 
         $this->filter->setInputData($get);
         if ($this->filter->isValid()) {
-            $tableName = $this->filter->getValue('tableName');
-            $row = $this->fileModel->findOneById($get['fileId'], $tableName);
+            $row = $this->fileModel->findOneById($get['fileId']);
+            
             if (empty($row)) {
-                return new TextResponse(
-                    $this->translator->translate('No document found'),
-                    404
-                );
+                return new JsonResponse([
+                    'error' => $this->translator->translate('No document found')
+                ], 404);
             }
+
             $response = new Response('php://temp', 200);
             $response->getBody()->write($row['data']);
             $response = $response->withHeader('Pragma', 'public');
             $response = $response->withHeader('Expires', 0);
             $response = $response->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
-            $response = $response->withHeader('Content-Type', 'application/force-download');
             $response = $response->withHeader('Content-Type', 'application/octet-stream');
-            $response = $response->withHeader('Content-Type', 'application/download');
-            $response = $response->withHeader('Content-Disposition', 'attachment; filename="'.$row['name'].'"');
+            $response = $response->withHeader('Content-Disposition', 'attachment; filename="'.basename($row['name']).'"');
             $response = $response->withHeader('Content-Transfer-Encoding', 'binary');
             return $response;
         } else {
@@ -94,5 +81,3 @@ class FindOneByIdHandler implements RequestHandlerInterface
         }
     }
 }
-
-

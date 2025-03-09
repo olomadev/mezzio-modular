@@ -11,6 +11,7 @@ use Laminas\Paginator\Adapter\DbSelect;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Db\TableGateway\TableGatewayInterface;
+use Common\Helper\RandomStringHelper;
 use Olobase\Mezzio\ColumnFiltersInterface;
 use Olobase\Mezzio\Authorization\PermissionModelInterface;
 
@@ -25,10 +26,7 @@ class PermissionModel implements PermissionModelInterface
         private ColumnFiltersInterface $columnFilters
     )
     {
-        $this->cache = $cache;
-        $this->permissions = $permissions;
         $this->adapter = $permissions->getAdapter();
-        $this->columnFilters = $columnFilters;
         $this->conn = $this->adapter->getDriver()->getConnection();
     }
 
@@ -86,6 +84,8 @@ class PermissionModel implements PermissionModelInterface
             'method',
         ]);
         $select->from(['p' => 'permissions']);
+        $select->order(['module ASC', 'name ASC']);
+
         $statement = $sql->prepareStatementForSqlObject($select);
         $resultSet = $statement->execute();
         $permissions = iterator_to_array($resultSet);
@@ -245,7 +245,7 @@ class PermissionModel implements PermissionModelInterface
         $post = [];
         if ($row) {
             $post = [
-                'id' => createGuid(), // create new id
+                'id' => RandomStringHelper::generateUuid(), // create new id
                 'module' => $row['module'],
                 'name' => $row['name'],
                 'resource' => $row['resource'],

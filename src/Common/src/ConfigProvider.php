@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Common;
 
+use Mezzio\Application;
+use Psr\Container\ContainerInterface;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Cache\Storage\StorageInterface;
 use Predis\ClientInterface as PredisInterface;
@@ -47,18 +49,22 @@ class ConfigProvider
                 ],
             ],
             'factories'  => [
-                // middlewares
-                Middleware\SetLocaleMiddleware::class => Middleware\SetLocaleMiddlewareFactory::class,
-                Middleware\JsonBodyParserMiddleware::class => Middleware\JsonBodyParserMiddlewareFactory::class,
-
-                // other factories
+                // classes
                 StorageInterface::class => Factory\CacheFactory::class,
                 SimpleCacheInterface::class => Factory\SimpleCacheFactory::class,   
                 PredisInterface::class => Factory\PredisFactory::class,
                 EventManagerInterface::class => Factory\EventManagerFactory::class,
 
+                // middlewares
+                Middleware\SetLocaleMiddleware::class => Middleware\SetLocaleMiddlewareFactory::class,
+                Middleware\JsonBodyParserMiddleware::class => Middleware\JsonBodyParserMiddlewareFactory::class,
+
+                // handlers
+                Handler\Locales\FindAllHandler::class => Handler\Locales\FindAllHandlerFactory::class,
+                Handler\Files\FindOneByIdHandler::class => Handler\Files\FindOneByIdHandlerFactory::class,
+                Handler\Files\ReadOneByIdHandler::class => Handler\Files\ReadOneByIdHandlerFactory::class,
+
                 // models
-                
                 Model\CommonModelInterface::class => function ($container) {
                     $config = $container->get('config');
                     $dbAdapter = $container->get(AdapterInterface::class);
@@ -74,4 +80,13 @@ class ConfigProvider
             ],
         ];
     }
+
+    /**
+     * Registers routes for the module
+     */
+    public static function registerRoutes(Application $app, ContainerInterface $container): void
+    {
+        (require __DIR__ . '/../config/routes.php')($app, $container);
+    }
+    
 }

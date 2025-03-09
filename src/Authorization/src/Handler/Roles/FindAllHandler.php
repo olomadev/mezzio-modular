@@ -14,15 +14,14 @@ class FindAllHandler implements RequestHandlerInterface
 {
     public function __construct(private RoleModelInterface $roleModel)
     {
-        $this->roleModel = $roleModel;
     }
 
     /**
      * @OA\Get(
-     *   path="/roles/findAll",
-     *   tags={"Roles"},
+     *   path="/authorization/roles/findAll",
+     *   tags={"Authorization Roles"},
      *   summary="Find all roles",
-     *   operationId="roles_findAll",
+     *   operationId="authorizationRoles_findAll",
      *   
      *   @OA\Response(
      *     response=200,

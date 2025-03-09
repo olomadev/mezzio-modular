@@ -6,10 +6,9 @@ namespace Common\Handler\Files;
 
 use Common\Model\FileModelInterface;
 use Common\Filter\Files\ReadFileFilter;
-use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
-use Laminas\Diactoros\Response\TextResponse;
 use Laminas\Diactoros\Response;
+use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -24,18 +23,14 @@ class ReadOneByIdHandler implements RequestHandlerInterface
         private Error $error
     )
     {
-        $this->filter = $filter;
-        $this->fileModel = $fileModel;
-        $this->translator = $translator;
-        $this->error = $error;
     }
 
     /**
      * @OA\Get(
-     *   path="/files/readOneById/{fileId}",
+     *   path="/common/files/readOneById/{fileId}",
      *   tags={"Common"},
-     *   summary="Find ",
-     *   operationId="files_readOne",
+     *   summary="Find a file by ID and return its content",
+     *   operationId="commonFiles_readOne",
      *
      *   @OA\Parameter(
      *       in="path",
@@ -57,35 +52,36 @@ class ReadOneByIdHandler implements RequestHandlerInterface
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Successful operation (File content returns to Base64 string)",
+     *     description="Successful operation (File content returned as raw data)",
      *   ),
+     *   @OA\Response(
+     *      response=404,
+     *      description="File not found"
+     *   )
      *)
      **/
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $queryParams = $request->getQueryParams();
-
         $get['fileId'] = $queryParams['id'];
-        $get['tableName'] = $queryParams['tableName'];
 
         $this->filter->setInputData($get);
         if ($this->filter->isValid()) {
-            $tableName = $this->filter->getValue('tableName');
-            $row = $this->fileModel->findOneById($get['fileId'], $tableName);
+            $row = $this->fileModel->findOneById($get['fileId']);
+            
             if (empty($row)) {
-                return new TextResponse(
-                    $this->translator->translate('No document found'),
-                    404
-                );
+                return new JsonResponse([
+                    'error' => $this->translator->translate('No document found')
+                ], 404);
             }
             $response = new Response('php://temp', 200);
             $response->getBody()->write($row['data']);
-            $response = $response->withHeader('Content-Type', (string)$row['type']);
+            $contentType = $row['type'] ?: 'application/octet-stream'; // Fallback type
+            $response = $response->withHeader('Content-Type', $contentType);
+            $response = $response->withHeader('Content-Disposition', 'inline; filename="' . basename($row['name']) . '"');
             return $response;
         } else {
             return new JsonResponse($this->error->getMessages($this->filter), 400);
         }
     }
 }
-
-

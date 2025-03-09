@@ -19,9 +19,8 @@ use Laminas\I18n\Translator\TranslatorInterface;
 class RefreshHandler implements RequestHandlerInterface
 {
     private $config;
-    /**
-     * This signal is controlled by the frontend, do not change the value.
-     */
+
+    // Bu sinyal frontend tarafından kontrol ediliyor, değerini değiştirmeyin.
     protected const LOGOUT_SIGNAL = 'Logout';
 
     public function __construct(
@@ -32,10 +31,6 @@ class RefreshHandler implements RequestHandlerInterface
         private Error $error
     ) {
         $this->config = $config;
-        $this->translator = $translator;
-        $this->authentication = $authentication;
-        $this->tokenModel = $tokenModel;
-        $this->error = $error;
     }
 
     /**
@@ -58,53 +53,57 @@ class RefreshHandler implements RequestHandlerInterface
      *      response=401,
      *      description="Unauthorized Response: token is expired"
      *   )
-     *)
+     * )
      **/
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $post = $request->getParsedBody();
+
+        // don't change the these codes !
         if (empty($post['token'])) {
             return new JsonResponse(
                 [
-                    'data' => ['error' => Self::LOGOUT_SIGNAL] // don't change
+                    'data' => ['error' => self::LOGOUT_SIGNAL] // no token, exited
                 ],
                 401
             );
         }
+        // token decryption
         $token = $this->tokenModel->getTokenEncrypt()->decrypt($post['token']);
-        if (! $token) {
+        if (!$token) {
             return new JsonResponse(
                 [
-                    'data' => ['error' => Self::LOGOUT_SIGNAL] // don't change
+                    'data' => ['error' => self::LOGOUT_SIGNAL] // token is invalid
                 ],
                 401
             );
         }
-        try { // Signature check !!
-            $this->tokenModel->decode($token);
+        try {
+            $this->tokenModel->decode($token); // token verification
         } catch (ExpiredException $e) {
-
+            
             list($header, $payload, $signature) = explode(".", $token);
-            $payload = json_decode(base64_decode($payload), true);  
+            $payload = json_decode(base64_decode($payload), true);
 
             if (json_last_error() != JSON_ERROR_NONE) {
                 return new JsonResponse(
                     [
                         'data' => ['error' => $this->translator->translate("Invalid token")]
-                    ], 
-                    401
-                );
-            }
-            $data = $this->tokenModel->refresh($request, $payload);
-            if (false == $data) {
-                return new JsonResponse(
-                    [
-                        'data' => ['error' => Self::LOGOUT_SIGNAL] // don't change
                     ],
                     401
                 );
             }
-            $details = $data['data']['details'];
+            // token renewal process
+            $data = $this->tokenModel->refresh($request, $payload);
+            if (false == $data) {
+                return new JsonResponse(
+                    [
+                        'data' => ['error' => self::LOGOUT_SIGNAL] // token could not be refreshed
+                    ],
+                    401
+                );
+            }
+            $details = $data['data']['details']; // new token and user information
             return new JsonResponse(
                 [
                     'data' => [
@@ -123,16 +122,16 @@ class RefreshHandler implements RequestHandlerInterface
             return new JsonResponse(
                 [
                     'data' => ['error' => $e->getMessage()]
-                ], 
+                ],
                 401
             );
         }
+
         return new JsonResponse(
             [
                 'data' => ['info' => $this->translator->translate("Token not expired to refresh")]
-            ], 
+            ],
             401
         );
     }
-
 }

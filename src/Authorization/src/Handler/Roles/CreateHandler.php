@@ -23,18 +23,14 @@ class CreateHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->roleModel = $roleModel;
-        $this->dataManager = $dataManager;
-        $this->error = $error;
-        $this->filter = $filter;
     }
     
     /**
      * @OA\Post(
-     *   path="/roles/create",
-     *   tags={"Roles"},
+     *   path="/authorization/roles/create",
+     *   tags={"Authorization Roles"},
      *   summary="Create a new role",
-     *   operationId="roles_create",
+     *   operationId="authorizationRoles_create",
      *
      *   @OA\RequestBody(
      *     description="Create a new role",

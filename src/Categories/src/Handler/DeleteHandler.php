@@ -20,9 +20,6 @@ class DeleteHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->categoryModel = $categoryModel;
-        $this->filter = $filter;
-        $this->error = $error;
     }
     
     /**

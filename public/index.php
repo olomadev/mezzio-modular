@@ -65,6 +65,5 @@ if (! is_file('config/module.config.php')) {
             $configProviderClass::registerRoutes($app, $container);
         }
     }
-
     $app->run();
 })();

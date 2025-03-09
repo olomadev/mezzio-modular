@@ -5,7 +5,7 @@ namespace Users\Schema;
 /**
  * @OA\Schema()
  */
-class PasswordSave
+class UsersPasswordSave
 {
     /**
      * @var string

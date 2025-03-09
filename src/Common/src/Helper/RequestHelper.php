@@ -15,47 +15,57 @@ class RequestHelper
      * @return string|null
      */
     public static function getOrigin($host) {
-        if (! $host) {
-            return $host;
+        if (!$host) {
+            return null;
         }
-        if (filter_var($host, FILTER_VALIDATE_IP)) { // IP address returned as domain
-            return $host; //* or replace with null if you don't want an IP back
+        
+        // Check if the host is an IP address
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return $host; // Return the IP as the origin
         }
-        $domainArray = explode(".", str_replace('www.', '', $host));
+        
+        // Remove 'www.' and split the domain
+        $domainArray = explode('.', str_replace('www.', '', $host));
         $count = count($domainArray);
-        if ( $count >= 3 && strlen($domainArray[$count-2])==2 ) {
-            // SLD (example.co.uk)
-            return implode('.', array_splice($domainArray, $count-3,3));
-        } else if ($count >= 2 ) {
-            // TLD (example.com)
-            return implode('.', array_splice($domainArray, $count-2,2));
+        
+        // Handle second-level domains (example.co.uk)
+        if ($count >= 3 && strlen($domainArray[$count - 2]) == 2) {
+            return implode('.', array_splice($domainArray, $count - 3, 3));
         }
+        
+        // Handle top-level domains (example.com)
+        if ($count >= 2) {
+            return implode('.', array_splice($domainArray, $count - 2, 2));
+        }
+
+        return null; // In case the domain does not meet criteria
     }
+
     /**
      * Get user real ip if proxy used
      * 
-     * @param  string|null  $default default value
-     * @param  integer $options filter_var options
+     * @param  string|null  $default Default value to return if no valid IP is found
+     * @param  int $options Options for the filter_var function (optional)
      * @return string|null
      */
-    public static function getRealUserIp($default = null, $options = 12582912) 
+    public static function getRealUserIp($default = null, $options = FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) 
     {
-        // 
-        // cloudflare support
-        // 
+        // Cloudflare and other proxy support
         $HTTP_CF_CONNECTING_IP = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : getenv('HTTP_CF_CONNECTING_IP');
         $HTTP_X_FORWARDED_FOR = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : getenv('HTTP_X_FORWARDED_FOR');
         $HTTP_CLIENT_IP = isset($_SERVER["HTTP_CLIENT_IP"]) ? $_SERVER["HTTP_CLIENT_IP"] : getenv('HTTP_CLIENT_IP');
         $REMOTE_ADDR = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : getenv('REMOTE_ADDR');
+
         $allIps = explode(",", "$HTTP_X_FORWARDED_FOR,$HTTP_CLIENT_IP,$HTTP_CF_CONNECTING_IP,$REMOTE_ADDR");
+        
         foreach ($allIps as $ip) {
-            if ($ip = filter_var($ip, FILTER_VALIDATE_IP, $options)) {
-                break;
+            $ip = trim($ip); // Clean up any whitespace
+            if (filter_var($ip, FILTER_VALIDATE_IP, $options)) {
+                return $ip; // Return the first valid IP found
             }
         }
-        if ($ip == null) {
-            $default = $REMOTE_ADDR;
-        }
-        return $ip ? $ip : $default;
+
+        // If no valid IP found, return the default or REMOTE_ADDR
+        return $default ?: $REMOTE_ADDR;
     }
 }

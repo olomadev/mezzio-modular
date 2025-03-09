@@ -14,15 +14,14 @@ class FindAllHandler implements RequestHandlerInterface
 {
     public function __construct(private PermissionModelInterface $permissionModel)
     {
-        $this->permissionModel = $permissionModel;
     }
 
     /**
      * @OA\Get(
-     *   path="/permissions/findAll",
-     *   tags={"Permissions"},
+     *   path="/authorization/permissions/findAll",
+     *   tags={"Authorization Permissions"},
      *   summary="Find all permissions",
-     *   operationId="permissions_findAll",
+     *   operationId="authorizationPermissions_findAll",
      *   
      *   @OA\Response(
      *     response=200,

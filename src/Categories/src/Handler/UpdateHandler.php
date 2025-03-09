@@ -23,10 +23,6 @@ class UpdateHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->categoryModel = $categoryModel;
-        $this->dataManager = $dataManager;
-        $this->error = $error;
-        $this->filter = $filter;
     }
     
     /**

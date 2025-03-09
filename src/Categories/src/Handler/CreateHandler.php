@@ -17,16 +17,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CreateHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private CategoryModelInterface $categoryModel,        
+        private CategoryModelInterface $categoryModel,
         private DataManagerInterface $dataManager,
         private SaveFilter $filter,
         private Error $error,
     ) 
     {
-        $this->categoryModel = $categoryModel;
-        $this->dataManager = $dataManager;
-        $this->error = $error;
-        $this->filter = $filter;
     }
     
     /**

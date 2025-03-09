@@ -50,6 +50,11 @@ class ConfigProvider
                 Handler\FindAllHandler::class => Handler\FindAllHandlerFactory::class,
                 Handler\FindAllByPagingHandler::class => Handler\FindAllByPagingHandlerFactory::class,
 
+                // handlers - account
+                Handler\MyAccount\FindMeHandler::class => Handler\MyAccount\FindMeHandlerFactory::class,
+                Handler\MyAccount\UpdateHandler::class => Handler\MyAccount\UpdateHandlerFactory::class,
+                Handler\MyAccount\UpdatePasswordHandler::class => Handler\MyAccount\UpdatePasswordHandlerFactory::class,
+
                 // models
                 Model\UserModelInterface::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);

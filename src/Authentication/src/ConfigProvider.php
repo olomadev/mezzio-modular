@@ -65,6 +65,13 @@ class ConfigProvider
                 Handler\LogoutHandler::class => Handler\LogoutHandlerFactory::class,
                 Handler\SessionUpdateHandler::class => Handler\SessionUpdateHandlerFactory::class,
 
+                // handlers - failed logins
+                Handler\FailedLogins\DeleteHandler::class => Handler\FailedLogins\DeleteHandlerFactory::class,
+                Handler\FailedLogins\FindAllByPagingHandler::class => Handler\FailedLogins\FindAllByPagingHandlerFactory::class,
+                Handler\FailedLogins\FindAllIpAdressesHandler::class => Handler\FailedLogins\FindAllIpAdressesHandlerFactory::class,
+                Handler\FailedLogins\FindAllUsernamesHandler::class => Handler\FailedLogins\FindAllUsernamesHandlerFactory::class,
+                
+
                 // models
                 Model\TokenModelInterface::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);

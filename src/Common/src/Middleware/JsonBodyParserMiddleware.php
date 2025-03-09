@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Common\Middleware;
 
+use function array_key_first;
+
 use Mezzio\Router\RouteResult;
-use Laminas\Diactoros\Response;
-use Laminas\Diactoros\Response\JsonResponse;
 use Olobase\Mezzio\Exception\BodyDecodeException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,70 +18,47 @@ class JsonBodyParserMiddleware implements MiddlewareInterface
 {
     public function __construct(private TranslatorInterface $translator)
     {
-        $this->translator = $translator;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $headers = $request->getHeaders();
-        $server  = $request->getServerParams();
-        $routeResult = $request->getAttribute(RouteResult::class, false);
-        //
-        // Sets "primary id" if it's exists
-        // 
-        $primaryKey = "null";
+        $routeResult = $request->getAttribute(RouteResult::class);
+        $primaryKey = 'id';
+
+        // If RouteResult exists and contains parameters, PrimaryKey is determined
         if ($routeResult) {
-            $params = $routeResult->getMatchedParams();
-            if (is_array($params) && ! empty($params)) {
-                unset($params['middleware']);
-                $paramArray = array_keys($params);
-                $primaryKey = empty($paramArray[0]) ? "null" : trim((string)$paramArray[0]);
-            }  
-        }
-        //
-        // Sets http method
-        // 
-        define('HTTP_METHOD', $request->getMethod());
-        //
-        // Parses & sets json content to request body
-        //
-        $get = array();
-        $post = array();
-        $contentType = empty($headers['content-type'][0]) ? null : current($headers['content-type']);
-        if ($contentType 
-            && strpos($contentType, 'application/json') === 0) {
-            $contentBody = $request->getBody()->getContents();
-            $post = json_decode($contentBody, true);
-            $lastError = json_last_error();
-            if ($lastError != JSON_ERROR_NONE) {
-                throw new BodyDecodeException($this->translator->translate($lastError));
+            $params = array_diff_key($routeResult->getMatchedParams() ?? [], ['middleware' => true]);
+            if (!empty($params)) {
+                $primaryKey = array_key_first($params);
             }
         }
-        // Set $primaryKey as "id"
-        //
-        switch ($request->getMethod()) {
-            case 'POST':
-            case 'PUT':
-            case 'OPTIONS':
-                $post = empty($post) ? $request->getParsedBody() : $post;
-                if ($primaryId = $request->getAttribute($primaryKey)) {
-                    $post['id'] = $primaryId;
-                }
-                $request = $request->withParsedBody($post);
-                break;
-            case 'PATCH':
-            case 'HEAD':
-            case 'GET':
-            case 'TRACE':
-            case 'CONNECT':
-            case 'DELETE':
-            case 'PROPFIND': // PROPFIND — used to retrieve properties, stored as XML, from a web resource.
-                $get = $request->getQueryParams();
-                if ($primaryId = $request->getAttribute($primaryKey)) {
-                    $get['id'] = $primaryId;
-                    $request = $request->withQueryParams($get);
-                }
-                break;
+
+        // JSON Body Parse
+        $contentType = $headers['content-type'][0] ?? null;
+        if ($contentType && str_starts_with($contentType, 'application/json')) {
+            $contentBody = $request->getBody()->getContents();
+            $parsedBody = json_decode($contentBody, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new BodyDecodeException($this->translator->translate(json_last_error_msg()));
+            }
+        } else {
+            $parsedBody = $request->getParsedBody();
+        }
+
+        // Set Json Body
+        if (in_array($request->getMethod(), ['POST', 'PUT', 'OPTIONS'], true)) {
+            if ($primaryId = $request->getAttribute($primaryKey)) { // Primary ID settings
+                $parsedBody[$primaryKey] = $primaryId;
+            }
+            $request = $request->withParsedBody($parsedBody);
+        } else {
+            $queryParams = $request->getQueryParams();
+            if ($primaryId = $request->getAttribute($primaryKey)) { // Primary ID settings
+                $queryParams[$primaryKey] = $primaryId;
+            }
+            $request = $request->withQueryParams($queryParams);
         }
         return $handler->handle($request);
     }

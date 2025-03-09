@@ -23,18 +23,14 @@ class UpdateHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->roleModel = $roleModel;
-        $this->dataManager = $dataManager;
-        $this->error = $error;
-        $this->filter = $filter;
     }
     
     /**
      * @OA\Put(
-     *   path="/roles/update/{roleId}",
-     *   tags={"Roles"},
+     *   path="/authorization/roles/update/{roleId}",
+     *   tags={"Authorization Roles"},
      *   summary="Update role",
-     *   operationId="roles_update",
+     *   operationId="authorizationRoles_update",
      *
      *   @OA\Parameter(
      *       name="roleId",

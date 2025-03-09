@@ -14,10 +14,7 @@ class FileModel implements FileModelInterface
     public function __construct(
         private AdapterInterface $adapter,        
         private TableGatewayInterface $files
-    )
-    {
-        $this->files = $files;
-        $this->adapter = $adapter;
+    ) {
         $this->conn = $this->adapter->getDriver()->getConnection();
     }
 
@@ -25,29 +22,30 @@ class FileModel implements FileModelInterface
      * Find one file by file id
      * 
      * @param  string $fileId
-     * @return array
+     * @return array|null
      */
-    public function findOneById(string $fileId)
+    public function findOneById(string $fileId): ?array
     {
-        $sql = new Sql($this->adapter);
-        $select = $sql->select();
-        $select->columns(
-            [
-                'id' => 'fileId',
-                'name' => 'fileName',
-                'size' => 'fileSize',
-                'type' => 'fileType',
-                'data' => 'fileData',
-                'tag' => 'fileTag',
-                'dim' => 'fileDimension',
-            ]
-        );
-        $select->from(['f' => 'files']);
-        $select->where(['f.fileId' => $fileId]);
-        $statement = $sql->prepareStatementForSqlObject($select);
-        $resultSet = $statement->execute();
-        $row = $resultSet->current();
-        return  $row;
-    }
+        try {
+            $sql = new Sql($this->adapter);
+            $select = $sql->select()
+                ->from(['f' => 'files'])
+                ->columns([
+                    'id'   => 'fileId',
+                    'name' => 'fileName',
+                    'size' => 'fileSize',
+                    'type' => 'fileType',
+                    'data' => 'fileData',
+                    'tag'  => 'fileTag',
+                    'dim'  => 'fileDimension',
+                ])
+                ->where(['f.fileId' => $fileId]);
 
+            $statement = $sql->prepareStatementForSqlObject($select);
+            $resultSet = $statement->execute();
+            return $resultSet->current() ?: null;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Common\Middleware;
 
-use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class JsonBodyParserMiddlewareFactory implements FactoryInterface
 {

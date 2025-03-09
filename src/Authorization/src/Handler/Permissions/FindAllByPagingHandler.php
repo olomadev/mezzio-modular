@@ -15,15 +15,14 @@ class FindAllByPagingHandler implements RequestHandlerInterface
 {
     public function __construct(private PermissionModelInterface $permissionModel)
     {
-        $this->permissionModel = $permissionModel;
     }
 
     /**
      * @OA\Get(
-     *   path="/permissions/findAllByPaging",
-     *   tags={"Permissions"},
+     *   path="/authorization/permissions/findAllByPaging",
+     *   tags={"Authorization Permissions"},
      *   summary="Find all permissions",
-     *   operationId="permissions_findAllByPaging",
+     *   operationId="authorizationPermissions_findAllByPaging",
      *
      *   @OA\Parameter(
      *       name="$filters",

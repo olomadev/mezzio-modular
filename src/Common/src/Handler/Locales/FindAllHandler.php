@@ -14,15 +14,14 @@ class FindAllHandler implements RequestHandlerInterface
 {
     public function __construct(private CommonModelInterface $commonModel)
     {
-        $this->commonModel = $commonModel;
     }
 
     /**
      * @OA\Get(
-     *   path="/locales/findAll",
+     *   path="/common/locales/findAll",
      *   tags={"Common"},
      *   summary="Find all locales",
-     *   operationId="locales_findAll",
+     *   operationId="commonLocales_findAll",
      *   
      *   @OA\Response(
      *     response=200,

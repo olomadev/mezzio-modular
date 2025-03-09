@@ -15,7 +15,6 @@ class FindAllByPagingHandler implements RequestHandlerInterface
 {
     public function __construct(private UserModelInterface $userModel)
     {
-        $this->userModel = $userModel;
     }
     
     /**

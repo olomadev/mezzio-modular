@@ -21,4 +21,8 @@ return function (Application $app, ContainerInterface $container) {
     $app->route('/api/users/findAllByPaging', [...$auth, [Users\Handler\FindAllByPagingHandler::class]], ['GET']);
     $app->route('/api/users/findOneById/:userId', [...$auth, [Users\Handler\FindOneByIdHandler::class]], ['GET']);
 
+    // Account (private)
+    $app->route('/api/users/myAccount/findMe', [...$auth, ...[Users\Handler\MyAccount\FindMeHandler::class]], ['GET']);
+    $app->route('/api/users/myAccount/update', [...$auth, ...[Users\Handler\MyAccount\UpdateHandler::class]], ['PUT']);
+    $app->route('/api/users/myAccount/updatePassword', [...$auth, ...[Users\Handler\MyAccount\UpdatePasswordHandler::class]], ['PUT']);
 };

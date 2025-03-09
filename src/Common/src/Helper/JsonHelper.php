@@ -17,21 +17,26 @@ class JsonHelper
      */
     public static function jsonDecode(string $data)
     {
-        if (empty($data)) {
+        if (empty($data = trim($data))) {
             return [];
         }
+
         $decodedValue = json_decode($data, true);
         $lastError = json_last_error();
         $jsonErrors = [
-            JSON_ERROR_DEPTH => 'Maximum heap size exceeded',
+            JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
             JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded',
             JSON_ERROR_SYNTAX => 'Syntax error',
+            JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded',
+            JSON_ERROR_RECURSION => 'Recursion detected',
+            JSON_ERROR_INF_OR_NAN => 'Inf and NaN cannot be JSON encoded',
+            JSON_ERROR_UNSUPPORTED_TYPE => 'Unsupported type',
         ];
 
         if ($lastError !== JSON_ERROR_NONE) {
             $errorMessage = $jsonErrors[$lastError] ?? 'Unknown error';
             throw new JsonDecodeException(
-                sprintf('%s. Related data: %s', $errorMessage, print_r($data, true))
+                sprintf('%s. Related data: %s', $errorMessage, json_encode($data))
             );
         }
 
@@ -46,18 +51,17 @@ class JsonHelper
      */
     public static function jsonEncode($value): string
     {
-        // We need to use JSON_UNESCAPED_SLASHES because javascript native 
-        // json stringify function use this feature by default
+        // We need to use JSON_UNESCAPED_SLASHES because JavaScript's native 
+        // JSON.stringify function uses this feature by default
         // 
         // https://stackoverflow.com/questions/10314715/why-is-json-encode-adding-backslashes
-        // 
         return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     /**
      * Paginator json decode
      *
-     * @param  array  $items   data
+     * @param  object|array $items   data
      * @return array
      */
     public static function paginatorJsonDecode($items): array

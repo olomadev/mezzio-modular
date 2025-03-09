@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Common\Handler\Actions;
+namespace Authorization\Handler\Methods;
 
-use Common\Model\CommonModelInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,17 +11,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FindAllHandler implements RequestHandlerInterface
 {
-    public function __construct(private CommonModelInterface $commonModel)
-    {
-        $this->commonModel = $commonModel;
-    }
-
     /**
      * @OA\Get(
-     *   path="/actions/findAll",
-     *   tags={"Common"},
-     *   summary="Find all actions",
-     *   operationId="actions_findAll",
+     *   path="/authorization/methods/findAll",
+     *   tags={"Authorization Methods"},
+     *   summary="Find all allowed http methods",
+     *   operationId="authorizationMethods_findAll",
      *   
      *   @OA\Response(
      *     response=200,
@@ -37,7 +31,13 @@ class FindAllHandler implements RequestHandlerInterface
      **/
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $data = $this->commonModel->findActions();
+        $data = [
+            ['id' => 'POST', 'name' => 'POST'],
+            ['id' => 'GET', 'name' => 'GET'],
+            ['id' => 'PUT', 'name' => 'PUT'],
+            ['id' => 'DELETE', 'name' => 'DELETE'],
+            ['id' => 'PATCH', 'name' => 'PATCH'],
+        ];
         return new JsonResponse([
             'data' => $data
         ]);

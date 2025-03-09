@@ -20,20 +20,17 @@ class UserModel implements UserModelInterface
     private $users;
     private $cache;
     private $simpleCache;
-    private $userRoles;
     private $userAvatars;
     private $columnFilters;
 
     public function __construct(
         TableGatewayInterface $users,
-        TableGatewayInterface $userRoles,
         TableGatewayInterface $userAvatars,
         ColumnFiltersInterface $columnFilters,
         SimpleCacheInterface $simpleCache
     ) {
         $this->adapter = $users->getAdapter();
         $this->users = $users;
-        $this->userRoles = $userRoles;
         $this->userAvatars = $userAvatars;
         $this->columnFilters = $columnFilters;
         $this->simpleCache = $simpleCache;
@@ -171,36 +168,6 @@ class UserModel implements UserModelInterface
         $resultSet = $statement->execute();
         $row = $resultSet->current();
         $statement->getResource()->closeCursor();
-
-        // user roles
-        // 
-        $sql    = new Sql($this->adapter);
-        $select = $sql->select();
-        $select->columns(
-            [
-                'id' => 'roleId',
-            ]
-        );
-        $select->from('userRoles');
-        $select->join(['r' => 'roles'], 'r.roleId = userRoles.roleId',
-            [
-                'name' => 'roleName'
-            ],
-        $select::JOIN_LEFT);
-        $select->where(['userId' => $userId]);
-        // echo $select->getSqlString($this->adapter->getPlatform());
-        // die;
-        $statement = $sql->prepareStatementForSqlObject($select);
-        $resultSet = $statement->execute();
-        $userRoles = iterator_to_array($resultSet);
-
-        $newUserRoles = array();
-        foreach ($userRoles as $key => $val) {
-            $newUserRoles[$key] = ["id" => $val['id'], "name" => $val['name']];
-        }
-        $row['userRoles'] = $newUserRoles;
-
-        $statement->getResource()->closeCursor();
         return $row;
     }
 
@@ -238,11 +205,6 @@ class UserModel implements UserModelInterface
                 $data['users']['password'] = password_hash($data['users']['password'], PASSWORD_DEFAULT, ['cost' => 10]);
             }
             $this->users->insert($data['users']);
-            if (! empty($data['userRoles'])) {
-                foreach ($data['userRoles'] as $val) {
-                    $this->userRoles->insert(['userId' => $userId, 'roleId' => $val['id']]);
-                }
-            }
             if (! empty($data['avatar']['image'])) {
                 $this->userAvatars->insert(['userId' => $userId, 'avatarImage' => $data['avatar']['image']]);
             }
@@ -265,12 +227,6 @@ class UserModel implements UserModelInterface
             }
             $data['users']['updatedAt'] = date('Y-m-d H:i:s');
             $this->users->update($data['users'], ['userId' => $userId]);
-            if (! empty($data['userRoles'])) {
-                $this->userRoles->delete(['userId' => $userId]);
-                foreach ($data['userRoles'] as $val) {
-                    $this->userRoles->insert(['userId' => $userId, 'roleId' => $val['id']]);
-                }
-            }
             $this->userAvatars->delete(['userId' => $userId]);
             if (! empty($data['avatar']['image'])) { // let's read mime type safely
                 $mimeType = finfo_buffer(
@@ -297,8 +253,7 @@ class UserModel implements UserModelInterface
     {
         try {
             $this->conn->beginTransaction();
-            $this->users->delete(['userId' => $userId]);
-            $this->userRoles->delete(['userId' => $userId]);
+            $this->users->delete(['userId' => $userId]);        
             $this->userAvatars->delete(['userId' => $userId]);
             $this->conn->commit();
         } catch (Exception $e) {

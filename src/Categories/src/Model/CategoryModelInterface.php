@@ -25,7 +25,7 @@ interface CategoryModelInterface
      * @param array $data
      * @return void
      */
-    public function create(array $data): void;
+    public function create(array $data);
 
     /**
      * Delete a category by category id
@@ -33,7 +33,7 @@ interface CategoryModelInterface
      * @param string $categoryId
      * @return void
      */
-    public function delete(string $categoryId): void;
+    public function delete(string $categoryId);
 
     /**
      * Update an existing category
@@ -42,5 +42,5 @@ interface CategoryModelInterface
      * @param bool $move move category to under another node
      * @return void
      */
-    public function update(array $data, bool $move = false): void;
+    public function update(array $data, bool $move = false);
 }

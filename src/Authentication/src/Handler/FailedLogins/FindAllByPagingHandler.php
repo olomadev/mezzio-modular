@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Authentication\Handler\FailedLogins;
 
-use Authentication\Model\FailedLoginModel;
+use Common\Helper\JsonHelper;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Authentication\Model\FailedLoginModelInterface;
 
 class FindAllByPagingHandler implements RequestHandlerInterface
 {
-    public function __construct(private FailedLoginModel $failedLoginModel)
+    public function __construct(private FailedLoginModelInterface $failedLoginModel)
     {
-        $this->failedLoginModel = $failedLoginModel;
     }
 
     /**
@@ -90,7 +90,7 @@ class FindAllByPagingHandler implements RequestHandlerInterface
             'perPage' => $paginator->getItemCountPerPage(),
             'totalPages' => $paginator->count(),
             'totalItems' => $paginator->getTotalItemCount(),
-            'data' => paginatorJsonDecode($paginator->getCurrentItems()),
+            'data' => JsonHelper::paginatorJsonDecode($paginator->getCurrentItems()),
         ]);
     }
 

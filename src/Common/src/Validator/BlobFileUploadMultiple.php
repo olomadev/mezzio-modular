@@ -1,21 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace Common\Validator;
 
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
-use Laminas\Validator\Exception\InvalidArgumentException;
 use Laminas\Validator\AbstractValidator;
+use Exception;
 
 /**
- * Validate file input array
+ * Validate multiple file input array
  */
 class BlobFileUploadMultiple extends AbstractValidator
 {
     const EMPTY_FILE_ID = 'emptyFileId';
     const EMPTY_FILE_CONTENT = 'emptyFileContent';
     const EMPTY_MIME_TYPES_OPTION = 'emptyFileMimeTypesOption';
-    const EMPTY_MAX_ALLOWED_UPLOAD_OPTION = 'emptyMaxAllowedUploadOption';
-    const INVALID_FILE_CONTENT = 'invalidbinaryContent';
+    const INVALID_FILE_CONTENT = 'invalidBinaryContent';
     const INVALID_FILE_MIME_TYPE = 'invalidFileMimeType';
     const MAX_ALLOWED_UPLOAD_SIZE_EXCEED = 'exceedAllowedUploadSize';
 
@@ -23,13 +23,12 @@ class BlobFileUploadMultiple extends AbstractValidator
      * @var array
      */
     protected $messageTemplates = [
-        Self::EMPTY_FILE_ID => 'Empty file id',
-        Self::EMPTY_FILE_CONTENT => 'Empty file content',
-        Self::EMPTY_MAX_ALLOWED_UPLOAD_OPTION => 'Empty "max_allowed_upload" option',
-        Self::EMPTY_MIME_TYPES_OPTION => 'Empty file "mime_types" option',
-        Self::INVALID_FILE_CONTENT => 'Invalid file content',
-        Self::INVALID_FILE_MIME_TYPE => 'Invalid file mime type',
-        Self::MAX_ALLOWED_UPLOAD_SIZE_EXCEED => 'Max allowed upload size exceed',
+        self::EMPTY_FILE_ID => 'Empty file id',
+        self::EMPTY_FILE_CONTENT => 'Empty file content',
+        self::EMPTY_MIME_TYPES_OPTION => 'Empty file "mime_types" option',
+        self::INVALID_FILE_CONTENT => 'Invalid file content',
+        self::INVALID_FILE_MIME_TYPE => 'Invalid file MIME type',
+        self::MAX_ALLOWED_UPLOAD_SIZE_EXCEED => 'Max allowed upload size exceeded',
     ];
 
     /**
@@ -42,67 +41,65 @@ class BlobFileUploadMultiple extends AbstractValidator
 
     protected $options = [
         'operation' => '',
-        'mime_types'  => '',
-        'max_allowed_upload'  => '',  // default 10 mega byte
+        'mime_types' => [],
+        'max_allowed_upload' => 10 * 1024 * 1024, // 10 MB varsayılan değer
     ];
 
     /**
      * Returns true if and only if $value meets the validation requirements.
      *
      * @param mixed $value
-     *
      * @return bool
-     *
-     * @throws Exception\RuntimeException If validation of $value is impossible
      */
     public function isValid($value)
     {
-        if (empty($this->options['max_allowed_upload'])) {
-            $this->error(Self::EMPTY_MAX_ALLOWED_UPLOAD_OPTION);
+        $maxAllowedUpload = (int) ($this->options['max_allowed_upload'] ?? 10 * 1024 * 1024);
+        $allowedFileMimeTypes = (array) ($this->options['mime_types'] ?? []);
+        $operation = (string) ($this->options['operation'] ?? '');
+
+        if (empty($allowedFileMimeTypes)) {
+            $this->error(self::EMPTY_MIME_TYPES_OPTION);
             return false;
         }
-        if (empty($this->options['mime_types'])) {
-            $this->error(Self::EMPTY_MIME_TYPES_OPTION);
-            return false;
-        }
-        $operation = (string)$this->options['operation'];
-        $maxAllowedUpload = (int)$this->options['max_allowed_upload'];
-        $allowedFileMimeTypes = (array)$this->options['mime_types'];
 
         // Parse & validate files
-        // 
-        foreach ($value as $k => $v) {
-            if (empty($v['id'])) {
-                $this->error(Self::EMPTY_FILE_ID);
+        foreach ($value as $file) {
+            if (empty($file['id'])) {
+                $this->error(self::EMPTY_FILE_ID);
                 return false;
             }
-            // pass binary content control for empty data
-            // 
-            if (empty($v['data']) && $operation == 'update') {
+            $binaryContent = $file['data'] ?? '';
+
+            // If it is an update operation and the content is empty, it is considered valid (for deletion).
+            if ($operation === 'update' && empty($binaryContent)) {
                 return true;
             }
-            if (false == $v['data'] || $v['data'] === "false") {
-                $this->error(Self::INVALID_FILE_CONTENT);
+
+            if (empty($binaryContent)) {
+                $this->error(self::EMPTY_FILE_CONTENT);
                 return false;
             }
-            if (empty($v['data'])) {
-                $this->error(Self::EMPTY_FILE_CONTENT);
+
+            // Maximum file size control
+            if (mb_strlen($binaryContent, '8bit') > $maxAllowedUpload) {
+                $this->error(self::MAX_ALLOWED_UPLOAD_SIZE_EXCEED);
                 return false;
             }
-            $binaryContent = $v['data'];
-            if (strlen($binaryContent) > $maxAllowedUpload) {
-                $this->error(Self::MAX_ALLOWED_UPLOAD_SIZE_EXCEED);
+
+            // MIME type detection and control
+            try {
+                $detector = new FinfoMimeTypeDetector();
+                $realMimeType = $detector->detectMimeTypeFromBuffer($binaryContent);
+
+                if (!$realMimeType || !in_array($realMimeType, $allowedFileMimeTypes, true)) {
+                    $this->error(self::INVALID_FILE_MIME_TYPE);
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error(self::INVALID_FILE_MIME_TYPE);
                 return false;
             }
-            // https://packagist.org/packages/league/mime-type-detection
-            //
-            $detector = new FinfoMimeTypeDetector;
-            $realMimeType = $detector->detectMimeTypeFromBuffer($binaryContent);
-            if (false == in_array($realMimeType, $allowedFileMimeTypes)) {
-                $this->error(Self::INVALID_FILE_MIME_TYPE);
-                return false;
-            }
-        };
+        }
         return true;
     }
 }

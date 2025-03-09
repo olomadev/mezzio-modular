@@ -12,8 +12,8 @@ use Mezzio\Cors\Configuration\ConfigurationInterface;
 
 class ErrorResponseGenerator
 {
-    protected $config;
-    protected $container;
+    protected array $config;
+    protected ContainerInterface $container;
 
     public function __construct(array $config, ContainerInterface $container)
     {
@@ -21,49 +21,48 @@ class ErrorResponseGenerator
         $this->container = $container;
     }
 
-    public function __invoke(Throwable $e, ServerRequestInterface $request, ResponseInterface $response)
+    public function __invoke(Throwable $e, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = $e->getTrace();
+
         $trace = array_map(
-            function ($a) {
-                    if (isset($a['file'])) {
-                        $a['file'] = str_replace(PROJECT_ROOT, '', $a['file']);
-                    }
-                    return $a;
-                },
+            fn ($a) => isset($a['file']) && defined('PROJECT_ROOT') 
+                ? array_merge($a, ['file' => str_replace(PROJECT_ROOT, '', $a['file'])]) 
+                : $a,
             $data
-        );        
+        );
+
         $json = [
-            'title' => get_class($e),
-            'type' => 'https://httpstatus.es/400',
+            'title'  => get_class($e),
+            'type'   => 'https://httpstatus.es/400',
             'status' => 400,
-            'file' => str_replace(PROJECT_ROOT, '', $e->getFile()),
-            'line' => $e->getLine(),
-            'error' => $e->getMessage(),
+            'file'   => defined('PROJECT_ROOT') ? str_replace(PROJECT_ROOT, '', $e->getFile()) : $e->getFile(),
+            'line'   => $e->getLine(),
+            'error'  => $e->getMessage(),
         ];
-        if (getenv('APP_ENV') == 'local') {
+
+        if (getenv('APP_ENV') === 'local') {
             $json['trace'] = $trace;
         }
-        $response = $response->withHeader('Access-Control-Expose-Headers', 'Token-Expired');
-        $response = $response->withHeader('Access-Control-Max-Age', '3600');
-        $response = $response->withHeader('Content-Type', 'application/json');
-        $response = $response->withStatus(400);
-        $response->getBody()->write(json_encode($json));
 
-        // Error mailer
+        $response = $response
+            ->withHeader('Access-Control-Expose-Headers', 'Token-Expired')
+            ->withHeader('Access-Control-Max-Age', '3600')
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(400);
+
+        $response->getBody()->write(json_encode($json, JSON_THROW_ON_ERROR));
+
+        // Error email notification (activated in production environment)
         // 
-        // if (getenv('APP_ENV') == 'prod') {
-        //     $class = get_class($e);
-        //     if (false === strpos($class, 'App\Exception') 
-        //         AND false === strpos($class, 'Laminas\Validator\Exception')) {
-        //         $errorMailer = $this->container->get(ErrorMailer::class);
-        //         $errorMailer->setEnv("production");
-        //         $errorMailer->setException($e);
-        //         $errorMailer->setUri($request->getUri()->getPath());
-        //         $errorMailer->setServerParams($request->getServerParams());
-        //         $errorMailer->send();
-        //     }
-        // }
+        if (getenv('APP_ENV') === 'prod') {
+            $class = get_class($e);
+            if (!str_contains($class, 'Laminas\Validator\Exception')) {
+
+                // send error mail ...
+            }
+        }
+
         return $response;
     }
 }

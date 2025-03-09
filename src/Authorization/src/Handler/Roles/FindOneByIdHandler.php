@@ -19,16 +19,14 @@ class FindOneByIdHandler implements RequestHandlerInterface
         private DataManagerInterface $dataManager
     )
     {
-        $this->roleModel = $roleModel;
-        $this->dataManager = $dataManager;
     }
 
     /**
      * @OA\Get(
-     *   path="/roles/findOneById/{roleId}",
-     *   tags={"Roles"},
+     *   path="/authorization/roles/findOneById/{roleId}",
+     *   tags={"Authorization Roles"},
      *   summary="Find item data",
-     *   operationId="roles_findOneById",
+     *   operationId="authorizationRoles_findOneById",
      *
      *   @OA\Parameter(
      *       name="roleId",

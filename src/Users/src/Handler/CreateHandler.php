@@ -17,7 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CreateHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private UserModel $userModel,        
+        private UserModelInterface $userModel,        
         private DataManagerInterface $dataManager,
         private SaveFilter $filter,
         private Error $error,

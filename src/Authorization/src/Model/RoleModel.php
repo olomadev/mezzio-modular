@@ -32,12 +32,8 @@ class RoleModel implements RoleModelInterface
         private StorageInterface $cache,
         private ColumnFiltersInterface $columnFilters
     )
-    {
-        $this->roles = $roles;
-        $this->rolePermissions = $rolePermissions;
-        $this->cache = $cache;
+    {        
         $this->adapter = $roles->getAdapter();
-        $this->columnFilters = $columnFilters;
         $this->conn = $this->adapter->getDriver()->getConnection();
     }
 
@@ -170,7 +166,7 @@ class RoleModel implements RoleModelInterface
         return $select;
     }
 
-    public function findAllByPaging(array $get)
+    public function findAllByPaging(array $get) : Paginator
     {
         $select = $this->findAllBySelect();
         $this->columnFilters->clear();
@@ -204,8 +200,7 @@ class RoleModel implements RoleModelInterface
             $select,
             $this->adapter
         );
-        $paginator = new Paginator($paginatorAdapter);
-        return $paginator;
+        return new Paginator($paginatorAdapter);
     }
 
     public function findOneById(string $roleId)
@@ -322,7 +317,7 @@ class RoleModel implements RoleModelInterface
     private function deleteCache() : void
     {
         $this->cache->removeItem(CACHE_ROOT_KEY.Self::class.':findRoles');
-        $this->cache->removeItem(CACHE_ROOT_KEY.\Common\Model\PermissionModel::class.':findPermissions');
+        $this->cache->removeItem(CACHE_ROOT_KEY.\Authorization\Model\PermissionModel::class.':findPermissions');
     }    
 
 }

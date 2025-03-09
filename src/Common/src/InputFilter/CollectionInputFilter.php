@@ -3,13 +3,16 @@
 namespace Common\InputFilter;
 
 use Laminas\InputFilter\CollectionInputFilter as LaminasCollectionInputFilter;
+use Laminas\InputFilter\InputFilter;
 
 class CollectionInputFilter extends LaminasCollectionInputFilter
 {
+    protected $isRequired = false; // Varsayılan olarak false
+
     /**
      * Get the input filter used when looping the data
      *
-     * @return BaseInputFilter
+     * @return InputFilter
      */
     public function getInputFilter()
     {
@@ -27,48 +30,42 @@ class CollectionInputFilter extends LaminasCollectionInputFilter
     public function isValid($context = null)
     {
         $this->collectionMessages = [];
-        $inputFilter              = $this->getInputFilter();
-        $valid                    = true;
+        $inputFilter = $this->getInputFilter();
+        $valid = true;
 
-        if ($this->getCount() < 1 && $this->isRequired) {
+        // If required and the collection is empty, an error is thrown.
+        if ($this->isRequired && $this->getCount() < 1) {
             $this->collectionMessages[] = $this->prepareRequiredValidationFailureMessage();
-            $valid                      = false;
+            return false;
         }
 
-        $dataCount = $this->data !== null ? count($this->data) : 0;
-        if ($dataCount < $this->getCount()) {
-            $valid = false;
-        }
-
-        if (! $this->data) {
+        //If there is no data, clear it and return it as invalid.
+        if (empty($this->data)) {
             $this->clearValues();
             $this->clearRawValues();
-
-            return $valid;
+            return false;
         }
 
-        /** @psalm-suppress MixedAssignment */
+        // Validate data in loop
         foreach ($this->data as $key => $data) {
-            /** @psalm-suppress MixedArgument */
             $inputFilter->setData($data);
 
-            if (null !== $this->validationGroup) {
+            if (isset($this->validationGroup[$key])) {
                 $inputFilter->setValidationGroup($this->validationGroup[$key]);
             }
 
             if ($inputFilter->isValid($context)) {
                 $this->validInputs[$key] = $inputFilter->getValidInput();
             } else {
-                $valid                          = false;
+                $valid = false;
                 $this->collectionMessages[$key] = $inputFilter->getMessages();
-                $this->invalidInputs[$key]      = $inputFilter->getInvalidInput();
+                $this->invalidInputs[$key] = $inputFilter->getInvalidInput();
             }
 
-            $this->collectionValues[$key]    = $inputFilter->getValues();
+            $this->collectionValues[$key] = $inputFilter->getValues();
             $this->collectionRawValues[$key] = $inputFilter->getRawValues();
         }
 
         return $valid;
     }
-    
 }

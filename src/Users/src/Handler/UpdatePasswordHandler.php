@@ -20,9 +20,6 @@ class UpdatePasswordHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->userModel = $userModel;
-        $this->error = $error;
-        $this->filter = $filter;
     }
 
     /**

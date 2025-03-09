@@ -27,4 +27,9 @@ return function (Application $app, ContainerInterface $container) {
     $app->route('/api/authorization/permissions/delete/:permId', [...$auth, [Authorization\Handler\Permissions\DeleteHandler::class]], ['DELETE']);
     $app->route('/api/authorization/permissions/findAll', [JwtAuthenticationMiddleware::class, Authorization\Handler\Permissions\FindAllHandler::class], ['GET']);
     $app->route('/api/authorization/permissions/findAllByPaging', [...$auth, [Authorization\Handler\Permissions\FindAllByPagingHandler::class]], ['GET']);
+
+    // common options (public)
+    $app->route('/api/authorization/actions/findAll', Authorization\Handler\Actions\FindAllHandler::class, ['GET']);
+    $app->route('/api/authorization/methods/findAll', Authorization\Handler\Methods\FindAllHandler::class, ['GET']);
+
 };

@@ -33,9 +33,6 @@ use Mezzio\Authentication\AuthenticationInterface;
 class TokenHandler implements RequestHandlerInterface
 {
     private $config;
-    /**
-     * This signal is controlled by the frontend, do not change the value.
-     */
     private const EXPIRE_SIGNAL = 'Token Expired';
 
     public function __construct(
@@ -45,9 +42,6 @@ class TokenHandler implements RequestHandlerInterface
         private Error $error
     ) {
         $this->config = $config;
-        $this->authentication = $authentication;
-        $this->filter = $filter;
-        $this->error = $error;
     }
     
     /**
@@ -102,7 +96,10 @@ class TokenHandler implements RequestHandlerInterface
             } catch (ExpiredException $e) {
                 return new JsonResponse(
                     [
-                        'data' => ['error' => Self::EXPIRE_SIGNAL]
+                        'data' => [
+                            'error' => Self::EXPIRE_SIGNAL,
+                            'message' => 'Your token has expired. Please login again.'
+                        ]
                     ], 
                     401,
                     ['Token-Expired' => 1]
@@ -112,7 +109,7 @@ class TokenHandler implements RequestHandlerInterface
                     [
                         'data' => ['error' => $e->getMessage()]
                     ], 
-                    401
+                    400
                 );
             }
             return $this->authentication->unauthorizedResponse($request);

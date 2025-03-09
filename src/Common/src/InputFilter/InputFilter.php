@@ -7,64 +7,68 @@ use Laminas\Stdlib\ArrayUtils;
 use Laminas\InputFilter\InputInterface;
 use Laminas\InputFilter\InputFilterInterface;
 use Laminas\InputFilter\InputFilter as LaminasInputFilter;
+use Laminas\InputFilter\Exception\InvalidArgumentException;
 
 class InputFilter extends LaminasInputFilter
 {
-    protected $user;
-    protected $request;
-    protected $filter;
-    protected $adapter;
-    protected $collectionNames = array();
+    protected ?array $user = null;
+    protected ?object $request = null;
+    protected ?array $collectionNames = [];
 
-    public function setRequest($request)
+    public function setRequest(object $request): void
     {
         $this->request = $request;
     }
 
-    public function getRequest()
+    public function getRequest(): ?object
     {
         return $this->request;
     }
 
-    public function setUser($user)
+    public function setUser(array $user): void
     {
         $this->user = $user;
     }
 
-    public function getUser()
+    public function getUser(): ?array
     {
         return $this->user;
     }
 
-    public function setInputData(array $data)
+    public function getCollectionNames(): array
     {
-        $this->setData($data);
+        return $this->collectionNames;
     }
-    
+
+    public function setCollectionNames(array $names): void
+    {
+        $this->collectionNames = $names;
+    }
+
     /**
-     * Returns to input data
+     * Returns the input data
      *
      * @return array
      */
-    public function getData() : array
+    public function getData(): array
     {
-        return $this->data;
+        return $this->data ?? [];
     }
 
     /**
      * Add an input to the input filter
      *
-     * @param  array|Traversable|InputInterface|InputFilterInterface $input
-     * @param  null|string $name
-     * @return InputFilter
+     * @param array|Traversable|InputInterface|InputFilterInterface $input
+     * @param null|string $name
+     * @return self
      */
-    public function add($input, $name = null)
+    public function add($input, $name = null): self
     {
-        //
-        // method override start
-        //
-        return parent::add($input, $name);
-        
-    }
+        if (!is_array($input) && !$input instanceof Traversable && !$input instanceof InputInterface && !$input instanceof InputFilterInterface) {
+            throw new InvalidArgumentException("Invalid input type.");
+        }
 
+        parent::add($input, $name);
+        return $this;
+    }
 }

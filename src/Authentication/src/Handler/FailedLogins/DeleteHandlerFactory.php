@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Authentication\Handler\FailedLogins;
 
-use Authentication\Model\FailedLoginModel;
+use Authentication\Model\FailedLoginModelInterface;
 use Authentication\Filter\FailedLogins\DeleteFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Psr\Container\ContainerInterface;
@@ -19,7 +19,7 @@ class DeleteHandlerFactory
         $inputFilter   = $pluginManager->get(DeleteFilter::class);
 
         return new DeleteHandler(
-            $container->get(FailedLoginModel::class),
+            $container->get(FailedLoginModelInterface::class),
             $inputFilter,
             $container->get(ErrorWrapperInterface::class)
         );

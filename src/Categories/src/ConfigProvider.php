@@ -41,6 +41,13 @@ class ConfigProvider
         return [
             'factories'  => [
 
+                // categories
+                Handler\CreateHandler::class => Handler\CreateHandlerFactory::class,
+                Handler\UpdateHandler::class => Handler\UpdateHandlerFactory::class,
+                Handler\DeleteHandler::class => Handler\DeleteHandlerFactory::class,
+                Handler\FindAllHandler::class => Handler\FindAllHandlerFactory::class,
+                Handler\FindAllByPagingHandler::class => Handler\FindAllByPagingHandlerFactory::class,
+
                 // models
                 Model\CategoryModelInterface::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);

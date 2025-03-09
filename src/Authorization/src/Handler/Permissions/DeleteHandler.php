@@ -20,17 +20,14 @@ class DeleteHandler implements RequestHandlerInterface
         private Error $error,
     ) 
     {
-        $this->permissionModel = $permissionModel;
-        $this->filter = $filter;
-        $this->error = $error;
     }
     
     /**
      * @OA\Delete(
-     *   path="/permissions/delete/{permId}",
-     *   tags={"Permissions"},
+     *   path="/authorization/permissions/delete/{permId}",
+     *   tags={"Authorization Permissions"},
      *   summary="Delete permission",
-     *   operationId="permissions_delete",
+     *   operationId="authorizationPermissions_delete",
      *
      *   @OA\Parameter(
      *       in="path",

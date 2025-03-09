@@ -28,7 +28,7 @@ class CategoryModel implements CategoryModelInterface
         $this->conn = $this->adapter->getDriver()->getConnection();
     }
 
-    public function findAll()
+    public function findAll() : array
     {
         $nested = empty($get['nested']) ? false : true;
         if ($nested) {
@@ -64,7 +64,7 @@ class CategoryModel implements CategoryModelInterface
         return $options;
     }
 
-    public function findAllNested()
+    public function findAllNested() : array
     {
         $key = CACHE_ROOT_KEY.Self::class.':'.__FUNCTION__;
         if ($this->cache->hasItem($key)) {

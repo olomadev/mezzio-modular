@@ -19,8 +19,6 @@ class LogoutHandler implements RequestHandlerInterface
         private TranslatorInterface $translator,
         private TokenModelInterface $tokenModel
     ) {
-        $this->translator = $translator;
-        $this->tokenModel = $tokenModel;
     }
 
     /**
@@ -38,14 +36,11 @@ class LogoutHandler implements RequestHandlerInterface
      **/
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // user token may expired thats why it's 
-        // important manually extract the token from header 
-        //
         $token = null;
         $authHeader = $request->getHeader('Authorization');
-        if (empty($authHeader)) {
-            $token = null;
-        } else if (preg_match("/Bearer\s+(.*)$/i", $authHeader[0], $matches)) {
+        
+        // token check
+        if (!empty($authHeader) && preg_match("/Bearer\s+(.*)$/i", $authHeader[0], $matches)) {
             $token = $matches[1];
         }
         if (empty($token)) {
@@ -58,17 +53,14 @@ class LogoutHandler implements RequestHandlerInterface
                 401
             );
         }
+        // decode token
         $token = $this->tokenModel->getTokenEncrypt()->decrypt($token);
         try {
             $data = $this->tokenModel->decode($token);
-            if (! empty($data['data']->details->id)) {
-                $this->tokenModel->kill( // delete the user from session db
-                    $data['data']->details->id,
-                    $data['data']->details->tokenId
-                ); 
+            if (!empty($data['data']->details->id)) {
+                $this->tokenModel->kill($data['data']->details->id, $data['data']->details->tokenId); // terminate session
             }
         } catch (ExpiredException $e) {
-            
             list($header, $payload, $signature) = explode(".", $token);
             $base64DecodedToken = base64_decode($payload);
             $token = json_decode($base64DecodedToken, true);
@@ -83,11 +75,9 @@ class LogoutHandler implements RequestHandlerInterface
                     401
                 );
             }
+            // terminate user with expired token
             if ($token) {
-                $this->tokenModel->kill( // delete the user from session db
-                    $token['data']['details']['id'],
-                    $token['data']['details']['tokenId']
-                );
+                $this->tokenModel->kill($token['data']['details']['id'], $token['data']['details']['tokenId']);
             }
         } catch (Exception $e) {
             return new JsonResponse(
@@ -101,5 +91,4 @@ class LogoutHandler implements RequestHandlerInterface
         }
         return new JsonResponse([]);
     }
-
 }
