@@ -31,6 +31,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => $this->getDependencies(),
+            'input_filters' => $this->getInputFilters(),
         ];
     }
 
@@ -50,7 +51,7 @@ class ConfigProvider
                 Handler\FindAllHandler::class => Handler\FindAllHandlerFactory::class,
                 Handler\FindAllByPagingHandler::class => Handler\FindAllByPagingHandlerFactory::class,
 
-                // handlers - account
+                // handlers - my account
                 Handler\MyAccount\FindMeHandler::class => Handler\MyAccount\FindMeHandlerFactory::class,
                 Handler\MyAccount\UpdateHandler::class => Handler\MyAccount\UpdateHandlerFactory::class,
                 Handler\MyAccount\UpdatePasswordHandler::class => Handler\MyAccount\UpdatePasswordHandlerFactory::class,
@@ -59,19 +60,35 @@ class ConfigProvider
                 Model\UserModelInterface::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);
                     $users = new TableGateway('users', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
-                    $userRoles = new TableGateway('userRoles', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
                     $userAvatars = new TableGateway('userAvatars', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
                     $columnFilters = $container->get(ColumnFiltersInterface::class);
                     $simpleCache = $container->get(SimpleCacheInterface::class);
                     return new Model\UserModel(
                         $users,
-                        $userRoles,
                         $userAvatars,
                         $columnFilters,
                         $simpleCache
                     );
                 },
             ],
+        ];
+    }
+
+    /**
+     * Returns the input filter dependencies
+     */
+    public function getInputFilters() : array
+    {
+        return [
+            'factories' => [
+                // Users
+                InputFilter\SaveFilter::class => InputFilter\SaveFilterFactory::class,
+                InputFilter\DeleteFilter::class => InputFilter\DeleteFilterFactory::class,
+
+                // My Account
+                InputFilter\MyAccount\SaveFilter::class => InputFilter\MyAccount\SaveFilterFactory::class,
+                InputFilter\MyAccount\DeleteFilter::class => InputFilter\MyAccount\DeleteFilterFactory::class,
+            ]
         ];
     }
     

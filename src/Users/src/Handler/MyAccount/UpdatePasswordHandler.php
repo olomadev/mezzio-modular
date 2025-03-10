@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Users\Handler\MyAccount;
 
 use Users\Model\UserModelInterface;
-use Users\Filter\MyAccount\PasswordChangeFilter;
+use Users\InputFilter\MyAccount\PasswordChangeFilter;
 use Mezzio\Authentication\UserInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -29,9 +29,9 @@ class UpdatePasswordHandler implements RequestHandlerInterface
     /**
      * @OA\Put(
      *   path="/users/myAccount/updatePassword",
-     *   tags={"Users MyAccount"},
+     *   tags={"Users My Account"},
      *   summary="Update password",
-     *   operationId="myAccount_updatePassword",
+     *   operationId="usersMyAccount_updatePassword",
      *
      *   @OA\RequestBody(
      *     description="Update Password",
@@ -50,12 +50,11 @@ class UpdatePasswordHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $user = $request->getAttribute(UserInterface::class);
-        $this->filter->setUser($user);
+        $userId = $user->getDetails()['id'];
         $this->filter->setInputData($request->getParsedBody());
         $data = array();
         $response = array();
         if ($this->filter->isValid()) {
-            $userId = $user->getId();
             $this->userModel->updatePasswordById(
                 $userId, 
                 $this->filter->getValue('newPassword')

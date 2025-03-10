@@ -6,7 +6,7 @@ namespace Users\Handler\MyAccount;
 
 use Users\Model\UserModelInterface;
 use Users\Schema\MyAccount\MyAccountSave;
-use Users\Filter\MyAccount\SaveFilter;
+use Users\InputFilter\MyAccount\SaveFilter;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Mezzio\Authentication\UserInterface;
@@ -33,9 +33,9 @@ class UpdateHandler implements RequestHandlerInterface
     /**
      * @OA\Put(
      *   path="/users/account/update",
-     *   tags={"Users MyAccount"},
+     *   tags={"Users My Account"},
      *   summary="Update account",
-     *   operationId="usersAccount_update",
+     *   operationId="usersMyAccount_update",
      *
      *   @OA\RequestBody(
      *     description="Update Cost",
@@ -54,17 +54,19 @@ class UpdateHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $user = $request->getAttribute(UserInterface::class);
-        $this->filter->setUser($user);
-        $this->filter->setInputData($request->getParsedBody());
+        $userId = $user->getDetails()['id'];
+        $post = $request->getParsedBody();
+        $post['userId'] = $userId;
+        $this->filter->setInputData($post);
         $data = array();
         $response = array();
         if ($this->filter->isValid()) {
             $this->dataManager->setInputFilter($this->filter);
             $data = $this->dataManager->getSaveData(
-                AccountSave::class, 
+                MyAccountSave::class, 
                 'users'
             );
-            $data['id'] = $user->getId();
+            $data['id'] = $userId;
             $this->userModel->update($data);
         } else {
             return new JsonResponse($this->error->getMessages($this->filter), 400);

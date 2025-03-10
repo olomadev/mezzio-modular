@@ -30,6 +30,9 @@ class ConfigProvider
     public function __invoke() : array
     {
         return [
+            'data_manager' => [
+                'common_schema_module' => 'Common',
+            ],
             'dependencies' => $this->getDependencies(),
         ];
     }

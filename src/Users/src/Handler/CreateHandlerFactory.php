@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Users\Handler;
 
 use Users\Model\UserModelInterface;
-use Users\Filter\SaveFilter;
+use Users\InputFilter\SaveFilter;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Mezzio\Authentication\AuthenticationInterface;

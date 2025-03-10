@@ -236,7 +236,8 @@ class RoleModel implements RoleModelInterface
                 'route',
                 'action',
                 'resource',
-                'moduleName',
+                'name',
+                'module',
                 'method',
             ]
         );

@@ -33,6 +33,15 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
+            'authentication' => [
+                'tablename' => 'users',
+                'username' => 'email',
+                'password' => 'password',
+                'form' => [
+                    'username' => 'username',
+                    'password' => 'password',
+                ]
+            ],
             'dependencies' => $this->getDependencies(),
         ];
     }

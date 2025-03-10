@@ -1,6 +1,6 @@
 <?php
 
-namespace Users\MyAccount\Schema;
+namespace Users\Schema\MyAccount;
 
 /**
  * @OA\Schema()

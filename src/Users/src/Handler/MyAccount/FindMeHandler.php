@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Users\Handler\MyAccount;
 
 use Users\Model\UserModelInterface;
-use Users\Schema\MyAccount\FindMe;
+use Users\Schema\MyAccount\MyAccountFindMe;
 use Olobase\Mezzio\DataManagerInterface;
 use Mezzio\Authentication\UserInterface;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -25,7 +25,7 @@ class FindMeHandler implements RequestHandlerInterface
     /**
      * @OA\Get(
      *   path="/users/myAccount/findMe",
-     *   tags={"Users MyAccount"},
+     *   tags={"Users My Account"},
      *   summary="Find my account data",
      *   operationId="usersMyAccount_findOneById",
      *
@@ -39,10 +39,10 @@ class FindMeHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $user = $request->getAttribute(UserInterface::class); // get id from current token
-        $userId = $user->getId();
+        $userId = $user->getDetails()['id'];
         $row = $this->userModel->findOneById($userId);
         if ($row) {
-            $data = $this->dataManager->getViewData(AccountFindMe::class, $row);
+            $data = $this->dataManager->getViewData(MyAccountFindMe::class, $row);
             return new JsonResponse($data);            
         }
         return new JsonResponse([], 404);

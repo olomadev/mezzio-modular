@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Users\Handler;
 
 use Users\Model\UserModelInterface;
-use Users\Filter\DeleteFilter;
+use Users\InputFilter\DeleteFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;

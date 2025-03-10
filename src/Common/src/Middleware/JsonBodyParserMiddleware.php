@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Common\Middleware;
 
-use function array_key_first;
-
 use Mezzio\Router\RouteResult;
 use Olobase\Mezzio\Exception\BodyDecodeException;
 use Psr\Http\Message\ResponseInterface;
@@ -23,18 +21,20 @@ class JsonBodyParserMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $headers = $request->getHeaders();
-        $routeResult = $request->getAttribute(RouteResult::class);
-        $primaryKey = 'id';
-
-        // If RouteResult exists and contains parameters, PrimaryKey is determined
+        $routeResult = $request->getAttribute(RouteResult::class, false);
+        //
+        // Sets primary id key if it's exists
+        // 
+        $primaryKey = null;
         if ($routeResult) {
-            $params = array_diff_key($routeResult->getMatchedParams() ?? [], ['middleware' => true]);
-            if (!empty($params)) {
-                $primaryKey = array_key_first($params);
-            }
+            $params = $routeResult->getMatchedParams();
+            if (is_array($params) && ! empty($params)) {
+                unset($params['middleware']);
+                $paramArray = array_keys($params);
+                $primaryKey = empty($paramArray[0]) ? null : trim((string)$paramArray[0]);
+            }  
         }
-
-        // JSON Body Parse
+        // Json Body Parse
         $contentType = $headers['content-type'][0] ?? null;
         if ($contentType && str_starts_with($contentType, 'application/json')) {
             $contentBody = $request->getBody()->getContents();
@@ -46,17 +46,16 @@ class JsonBodyParserMiddleware implements MiddlewareInterface
         } else {
             $parsedBody = $request->getParsedBody();
         }
-
         // Set Json Body
         if (in_array($request->getMethod(), ['POST', 'PUT', 'OPTIONS'], true)) {
-            if ($primaryId = $request->getAttribute($primaryKey)) { // Primary ID settings
-                $parsedBody[$primaryKey] = $primaryId;
+            if ($primaryKey && $primaryId = $request->getAttribute($primaryKey)) { // Primary ID settings
+                $parsedBody['id'] = $primaryId;
             }
             $request = $request->withParsedBody($parsedBody);
         } else {
             $queryParams = $request->getQueryParams();
-            if ($primaryId = $request->getAttribute($primaryKey)) { // Primary ID settings
-                $queryParams[$primaryKey] = $primaryId;
+            if ($primaryKey && $primaryId = $request->getAttribute($primaryKey)) { // Primary ID settings
+                $queryParams['id'] = $primaryId;
             }
             $request = $request->withQueryParams($queryParams);
         }

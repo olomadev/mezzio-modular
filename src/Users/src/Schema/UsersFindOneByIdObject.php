@@ -28,11 +28,6 @@ class UsersFindOneByIdObject
      * @var string
      * @OA\Property()
      */
-    public $password;
-    /**
-     * @var string
-     * @OA\Property()
-     */
     public $email;
     /**
      * @var integer

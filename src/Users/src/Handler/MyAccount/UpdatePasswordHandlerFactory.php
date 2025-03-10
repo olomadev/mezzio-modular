@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Users\Handler\MyAccount;
 
 use Users\Model\UserModelInterface;
-use Users\Filter\Account\PasswordChangeFilter;
+use Users\InputFilter\MyAccount\PasswordChangeFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;

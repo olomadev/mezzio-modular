@@ -1,6 +1,6 @@
 <?php
 
-namespace Users\MyAccount\Schema;
+namespace Users\Schema\MyAccount;
 
 /**
  * @OA\Schema()
@@ -39,11 +39,6 @@ class MyAccountSave
     * )
     */
     public $locale;
-    /**
-     * @var integer
-     * @OA\Property()
-     */
-    public $emailActivation;
     /**
     * @var object
     * @OA\Property(

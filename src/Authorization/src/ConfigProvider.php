@@ -30,6 +30,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => $this->getDependencies(),
+            'input_filters' => $this->getInputFilters(),
         ];
     }
 
@@ -63,10 +64,6 @@ class ConfigProvider
                 Handler\Permissions\FindAllHandler::class => Handler\Permissions\FindAllHandlerFactory::class,
                 Handler\Permissions\FindAllByPagingHandler::class => Handler\Permissions\FindAllByPagingHandlerFactory::class,
 
-                // handlers - common options
-                Handler\Actions\FindAllHandler::class => Handler\Actions\FindAllHandlerFactory::class,
-                Handler\Methods\FindAllHandler::class => Handler\Methods\FindAllHandlerFactory::class,
-
                 // models
                 Model\RoleModelInterface::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);
@@ -96,6 +93,23 @@ class ConfigProvider
         ];
     }
     
+    /**
+     * Returns the input filter dependencies
+     */
+    public function getInputFilters() : array
+    {
+        return [
+            'factories' => [
+                // Permissions
+                // InputFilter\Permissions\SaveFilter::class => InputFilter\Permissions\SaveFilterFactory::class,
+                // InputFilter\Permissions\DeleteFilter::class => InputFilter\Permissions\DeleteFilterFactory::class,
+                // Roles
+                InputFilter\Roles\SaveFilter::class => InputFilter\Roles\SaveFilterFactory::class,
+                InputFilter\Roles\DeleteFilter::class => InputFilter\Roles\DeleteFilterFactory::class,
+            ]
+        ];
+    }
+
     /**
      * Registers routes for the module
      */

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Users\Handler;
 
-use Users\Model\UserModelInterface;
 use Users\Schema\UserSave;
-use Users\Filter\SaveFilter;
+use Users\InputFilter\SaveFilter;
+use Users\Model\UserModelInterface;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;

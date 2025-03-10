@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Users\Handler;
 
 use Users\Model\UserModelInterface;
-use Users\Filter\DeleteFilter;
+use Users\InputFilter\DeleteFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
