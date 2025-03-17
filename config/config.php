@@ -13,6 +13,7 @@ $cacheConfig = [
 
 // Let's merge the configuration with ConfigAggregator
 $aggregator = new ConfigAggregator([
+  \Modules\ConfigProvider::class,
   \Olobase\Mezzio\ConfigProvider::class,
   \Mezzio\Authorization\ConfigProvider::class,
   \Categories\ConfigProvider::class,

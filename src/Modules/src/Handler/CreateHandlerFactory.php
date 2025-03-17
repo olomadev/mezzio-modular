@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Authorization\Handler\Permissions;
+namespace Modules\Handler;
 
-use Authorization\InputFilter\Permissions\SaveFilter;
+use Modules\Model\ModuleModelInterface;
+use Modules\InputFilter\SaveFilter;
 use Olobase\Mezzio\DataManagerInterface;
-use Olobase\Mezzio\Authorization\PermissionModelInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Mezzio\Authentication\AuthenticationInterface;
 use Psr\Container\ContainerInterface;
@@ -22,7 +22,7 @@ class CreateHandlerFactory
         $inputFilter   = $pluginManager->get(SaveFilter::class);
 
         return new CreateHandler(
-            $container->get(PermissionModelInterface::class),
+            $container->get(ModuleModelInterface::class),
             $container->get(DataManagerInterface::class),
             $inputFilter,
             $container->get(ErrorWrapperInterface::class)

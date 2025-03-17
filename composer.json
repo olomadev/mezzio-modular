@@ -92,7 +92,8 @@
             "Authentication\\": "src/Authentication/src/",
             "Authorization\\": "src/Authorization/src/",
             "Users\\": "src/Users/src/",
-            "Categories\\": "src/Categories/src/"
+            "Categories\\": "src/Categories/src/",
+            "Modules\\": "src/Modules/src/"
         }
     },
     "autoload-dev": {

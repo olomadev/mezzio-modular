@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\AdapterInterface;
 
 interface CommonModelInterface
 {
+    public function findModules(): array;
+    
     public function findLocaleIds(): array;
 
     public function findLocales(): array;

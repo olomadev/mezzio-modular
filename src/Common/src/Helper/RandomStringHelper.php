@@ -18,7 +18,7 @@ class RandomStringHelper
      */
     public static function isUid(string $value): bool
     {
-        return Uuid::isValid($value);
+        return SymfonyUuid::isValid($value);
     }
 
     /**
@@ -28,7 +28,7 @@ class RandomStringHelper
      * @param  bool $lowercase Whether to include lowercase letters
      * @return string
      */
-    public static function generateRandomString(int $length = 10, $lowercase = false): string
+    public static function generateRandomString(int $length = 10, bool $lowercase = false): string
     {
         $chars = $lowercase ? '0123456789abcdefghijklmnopqrstuvwxyz' : '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         return self::generateRandom($chars, $length);
@@ -68,9 +68,9 @@ class RandomStringHelper
     }
 
     /**
-     * Generate UUID based on the specified version using Symfony Uid.
+     * Generate UUID based on the specified version using Ramsey Uuid.
      *
-     * @param  int $version UUID version (1, 3, 4, 5, 6, 7)
+     * @param  int $version UUID version (1, 3, 4, 5)
      * @param  string|null $namespace Used for UUID v3 and v5 (must be a valid UUID)
      * @param  string|null $name The name for UUID v3 and v5
      * @return string
@@ -80,25 +80,21 @@ class RandomStringHelper
     {
         switch ($version) {
             case 1:
-                return Uuid::v1()->toRfc4122();
+                return Uuid::uuid1()->toString();
             case 3:
                 if (!$namespace || !$name || !Uuid::isValid($namespace)) {
                     throw new InvalidArgumentException("UUID v3 requires a valid namespace UUID and name.");
                 }
-                return Uuid::v3(Uuid::fromString($namespace), $name)->toRfc4122();
+                return Uuid::uuid3(Uuid::fromString($namespace), $name)->toString();
             case 4:
-                return Uuid::v4()->toRfc4122();
+                return Uuid::uuid4()->toString();
             case 5:
                 if (!$namespace || !$name || !Uuid::isValid($namespace)) {
                     throw new InvalidArgumentException("UUID v5 requires a valid namespace UUID and name.");
                 }
-                return Uuid::v5(Uuid::fromString($namespace), $name)->toRfc4122();
-            case 6:
-                return Uuid::v6()->toRfc4122();
-            case 7:
-                return Uuid::v7()->toRfc4122();
+                return Uuid::uuid5(Uuid::fromString($namespace), $name)->toString();
             default:
-                throw new InvalidArgumentException("Unsupported UUID version: $version. Allowed versions: 1, 3, 4, 5, 6, 7.");
+                throw new InvalidArgumentException("Unsupported UUID version: $version. Allowed versions: 1, 3, 4, 5.");
         }
     }
     

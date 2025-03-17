@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Authorization\Handler\Permissions;
+namespace Modules\Handler;
 
-use Authorization\Schema\Permissions\PermissionSave;
-use Authorization\InputFilter\Permissions\SaveFilter;
-use Olobase\Mezzio\Authorization\PermissionModelInterface;
+use Modules\Model\ModuleModelInterface;
+use Modules\Schema\ModuleSave;
+use Modules\InputFilter\SaveFilter;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -17,7 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CreateHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private PermissionModelInterface $permissionModel,
+        private ModuleModelInterface $moduleModel,
         private DataManagerInterface $dataManager,
         private SaveFilter $filter,
         private Error $error,
@@ -27,14 +27,14 @@ class CreateHandler implements RequestHandlerInterface
     
     /**
      * @OA\Post(
-     *   path="/authorization/permissions/create",
-     *   tags={"Authorization Permissions"},
-     *   summary="Create a new permission",
-     *   operationId="authorizationPermissions_create",
+     *   path="/modules/create",
+     *   tags={"Modules"},
+     *   summary="Create a new module",
+     *   operationId="modules_create",
      *
      *   @OA\RequestBody(
-     *     description="Create a new permission",
-     *     @OA\JsonContent(ref="#/components/schemas/PermissionSave"),
+     *     description="Create a new role",
+     *     @OA\JsonContent(ref="#/components/schemas/ModuleSave"),
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -53,8 +53,8 @@ class CreateHandler implements RequestHandlerInterface
         $response = array();
         if ($this->filter->isValid()) {
             $this->dataManager->setInputFilter($this->filter);
-            $data = $this->dataManager->getSaveData(PermissionSave::class, 'permissions');
-            $this->permissionModel->create($data);
+            $data = $this->dataManager->getSaveData(ModuleSave::class, 'modules');
+            $this->moduleModel->create($data);
         } else {
             return new JsonResponse($this->error->getMessages($this->filter), 400);
         }

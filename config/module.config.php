@@ -5,4 +5,5 @@ return [
     'Authorization',
     'Users',
     'Categories',
+    'Modules'
 ];

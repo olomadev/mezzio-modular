@@ -101,8 +101,8 @@ class ConfigProvider
         return [
             'factories' => [
                 // Permissions
-                // InputFilter\Permissions\SaveFilter::class => InputFilter\Permissions\SaveFilterFactory::class,
-                // InputFilter\Permissions\DeleteFilter::class => InputFilter\Permissions\DeleteFilterFactory::class,
+                InputFilter\Permissions\SaveFilter::class => InputFilter\Permissions\SaveFilterFactory::class,
+                InputFilter\Permissions\DeleteFilter::class => InputFilter\Permissions\DeleteFilterFactory::class,
                 // Roles
                 InputFilter\Roles\SaveFilter::class => InputFilter\Roles\SaveFilterFactory::class,
                 InputFilter\Roles\DeleteFilter::class => InputFilter\Roles\DeleteFilterFactory::class,
