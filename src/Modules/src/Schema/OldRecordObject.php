@@ -5,7 +5,7 @@ namespace Modules\Schema;
 /**
  * @OA\Schema()
  */
-class ModulesFindAllByPagingObject
+class OldRecordObject
 {
     /**
      * @var string

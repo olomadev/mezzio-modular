@@ -13,6 +13,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Laminas\I18n\Translator\TranslatorInterface;
 
 class UpdateHandler implements RequestHandlerInterface
 {
@@ -20,6 +21,7 @@ class UpdateHandler implements RequestHandlerInterface
         private ModuleModelInterface $moduleModel,
         private DataManagerInterface $dataManager,
         private SaveFilter $filter,
+        private TranslatorInterface $translator,
         private Error $error,
     ) 
     {
@@ -46,6 +48,7 @@ class UpdateHandler implements RequestHandlerInterface
      *   ),
      *   @OA\Response(
      *     response=200,
+     *     @OA\JsonContent(ref="#/components/schemas/ModuleUpdateResponse"),
      *     description="Successful operation",
      *   ),
      *   @OA\Response(
@@ -62,10 +65,24 @@ class UpdateHandler implements RequestHandlerInterface
         if ($this->filter->isValid()) {
             $this->dataManager->setInputFilter($this->filter);
             $data = $this->dataManager->getSaveData(ModuleSave::class, 'modules');
+            $module = $data['modules'];
+            $moduleId = $this->filter->getValue('id');
+            if ($module['name'] == 'Modules') {
+                return new JsonResponse(
+                    [
+                        'data' => [
+                            'info' => $this->translator->translate('The core module `Modules` cannot be modified'),
+                        ]
+                    ],
+                    400
+                );
+            }
+            $oldRow = $this->moduleModel->findOneById($moduleId);
             $this->moduleModel->update($data);
         } else {
             return new JsonResponse($this->error->getMessages($this->filter), 400);
         }
+        $response['data']['oldRecord'] = $oldRow;
         return new JsonResponse($response);   
     }
 }

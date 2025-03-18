@@ -18,12 +18,12 @@ class ModuleSave
      * @var string
      * @OA\Property()
      */
-    public $moduleName;
+    public $name;
     /**
      * @var string
      * @OA\Property()
      */
-    public $moduleVersion;
+    public $version;
     /**
      * @var integer
      * @OA\Property()

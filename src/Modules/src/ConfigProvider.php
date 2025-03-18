@@ -8,7 +8,6 @@ use Mezzio\Application;
 use Psr\Container\ContainerInterface;
 use Laminas\Cache\Storage\StorageInterface;
 use Olobase\Mezzio\ColumnFiltersInterface;
-use Olobase\Mezzio\Authorization\PermissionModelInterface;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\TableGateway\TableGateway;
@@ -31,6 +30,15 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'input_filters' => $this->getInputFilters(),
+            'translator' => [
+                'translation_file_patterns' => [
+                    [
+                        'type' => 'PhpArray',
+                        'base_dir' => __DIR__ . '/../i18n',
+                        'pattern' => '%s/messages.php',
+                    ]
+                ],
+            ]
         ];
     }
 

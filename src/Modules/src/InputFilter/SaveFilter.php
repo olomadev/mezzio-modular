@@ -37,7 +37,7 @@ class SaveFilter extends InputFilter
             ],
         ]);
         $this->add([
-            'name' => 'moduleName',
+            'name' => 'name',
             'required' => true,
             'filters' => [
                 ['name' => StringTrim::class],
@@ -54,7 +54,7 @@ class SaveFilter extends InputFilter
             ],
         ]);
         $this->add([
-            'name' => 'moduleVersion',
+            'name' => 'version',
             'required' => true,
             'filters' => [
                 ['name' => StringTrim::class],

@@ -18,5 +18,4 @@ return function (Application $app, ContainerInterface $container) {
     $app->route('/api/modules/delete/:moduleId', [...$auth, ...[Modules\Handler\DeleteHandler::class]], ['DELETE']);
     $app->route('/api/modules/findAll', [Modules\Handler\FindAllHandler::class], ['GET']);
     $app->route('/api/modules/findAllByPaging', [...$auth, ...[Modules\Handler\FindAllByPagingHandler::class]], ['GET']);
-    // $app->route('/api/modules/findOneById/:moduleId', [...$auth, ...[Modules\Handler\FindOneByIdHandler::class]], ['GET']);
 };

@@ -47,11 +47,11 @@ class ModuleModel implements ModuleModelInterface
                 ->from(['m' => 'modules'])
                 ->columns([
                     'id' => 'moduleId',
-                    'name' => 'moduleName',
-                    'version' => 'moduleVersion'
+                    'name',
+                    'version',
                 ])
                 ->where(['isActive' => 1])
-                ->order('moduleName ASC');
+                ->order('name ASC');
 
             $statement = $sql->prepareStatementForSqlObject($select);
             $resultSet = $statement->execute();
@@ -73,8 +73,8 @@ class ModuleModel implements ModuleModelInterface
         $select = $sql->select();
         $select->columns([
             'id' => 'moduleId',
-            'moduleName',
-            'moduleVersion',
+            'name',
+            'version',
             'isActive'
         ]);
         $select->from(['m' => 'modules']);
@@ -86,7 +86,7 @@ class ModuleModel implements ModuleModelInterface
         $select = $this->findAllBySelect();
         $this->columnFilters->clear();
         $this->columnFilters->setColumns([
-            'moduleName',
+            'name',
         ]);
         $this->columnFilters->setData($get);
         $this->columnFilters->setSelect($select);
@@ -123,8 +123,8 @@ class ModuleModel implements ModuleModelInterface
         $select = $sql->select();
         $select->columns([
             'id' => 'moduleId',
-            'moduleName',
-            'moduleVersion',
+            'name',
+            'version',
             'isActive'
         ]);
         $select->from(['m' => 'modules']);

@@ -130,8 +130,7 @@ class RefreshHandler implements RequestHandlerInterface
         return new JsonResponse(
             [
                 'data' => ['info' => $this->translator->translate("Token not expired to refresh")]
-            ],
-            401
+            ]
         );
     }
 }

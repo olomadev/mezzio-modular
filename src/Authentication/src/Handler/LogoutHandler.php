@@ -58,7 +58,10 @@ class LogoutHandler implements RequestHandlerInterface
         try {
             $data = $this->tokenModel->decode($token);
             if (!empty($data['data']->details->id)) {
-                $this->tokenModel->kill($data['data']->details->id, $data['data']->details->tokenId); // terminate session
+                $this->tokenModel->kill(
+                    $data['data']->details->id,
+                    $data['data']->details->tokenId
+                );
             }
         } catch (ExpiredException $e) {
             list($header, $payload, $signature) = explode(".", $token);
@@ -77,7 +80,10 @@ class LogoutHandler implements RequestHandlerInterface
             }
             // terminate user with expired token
             if ($token) {
-                $this->tokenModel->kill($token['data']['details']['id'], $token['data']['details']['tokenId']);
+                $this->tokenModel->kill(
+                    $token['data']['details']['id'],
+                    $token['data']['details']['tokenId']
+                );
             }
         } catch (Exception $e) {
             return new JsonResponse(
