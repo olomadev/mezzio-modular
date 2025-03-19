@@ -37,7 +37,7 @@ class FindAllHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $get = $request->getQueryParams();
-        $data = $this->roleModel->findRoles($get);
+        $data = $this->roleModel->findAll($get);
         return new JsonResponse([
             'data' => $data,
         ]);

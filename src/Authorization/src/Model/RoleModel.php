@@ -18,23 +18,46 @@ class RoleModel implements RoleModelInterface
     private $conn;
     private $adapter;
 
-    /**
-     * Constructor
-     * 
-     * @param TableGatewayInterface $roles object
-     * @param TableGatewayInterface $rolePermissions object
-     * @param StorageInterface $cache object
-     * @param ColumnFilters object
-     */
     public function __construct(
         private TableGatewayInterface $roles,
         private TableGatewayInterface $rolePermissions,
+        private TableGatewayInterface $userRoles,
         private StorageInterface $cache,
         private ColumnFiltersInterface $columnFilters
     )
     {        
         $this->adapter = $roles->getAdapter();
         $this->conn = $this->adapter->getDriver()->getConnection();
+    }
+
+    /**
+     * Find roles for role selectbox
+     * 
+     * @return array
+     */
+    public function findAll() : ?array
+    {
+        $key = CACHE_ROOT_KEY.Self::class.':'.__FUNCTION__;
+        if ($this->cache->hasItem($key)) {
+            return $this->cache->getItem($key);
+        }
+        $sql    = new Sql($this->adapter);
+        $select = $sql->select();
+        $select->columns(
+            [
+                'id' => 'roleId',
+                'name' => 'roleName'
+            ]
+        );
+        $select->from(['r' => 'roles']);
+        $select->order(['roleLevel ASC']);
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+        $results = iterator_to_array($resultSet);
+        if (! empty($results)) {
+            $this->cache->setItem($key, $results);    
+        }
+        return $results;
     }
 
     /**
@@ -62,36 +85,6 @@ class RoleModel implements RoleModelInterface
             $roles[] = $row['roleKey'];
         }
         return $roles;
-    }
-
-    /**
-     * Find roles for role selectbox
-     * 
-     * @return array
-     */
-    public function findRoles() : ?array
-    {
-        $key = CACHE_ROOT_KEY.Self::class.':'.__FUNCTION__;
-        if ($this->cache->hasItem($key)) {
-            return $this->cache->getItem($key);
-        }
-        $sql    = new Sql($this->adapter);
-        $select = $sql->select();
-        $select->columns(
-            [
-                'id' => 'roleId',
-                'name' => 'roleName'
-            ]
-        );
-        $select->from(['r' => 'roles']);
-        $select->order(['roleLevel ASC']);
-        $statement = $sql->prepareStatementForSqlObject($select);
-        $resultSet = $statement->execute();
-        $results = iterator_to_array($resultSet);
-        if (! empty($results)) {
-            $this->cache->setItem($key, $results);    
-        }
-        return $results;
     }
 
     /**
@@ -140,16 +133,6 @@ class RoleModel implements RoleModelInterface
             $levels[$row['roleKey']] = $row['roleLevel'];
         }
         return $levels;
-    }
-
-    /**
-     * Find all roles (Do cache)
-     *
-     * @return array
-     */
-    public function findAll() : array
-    {
-        return $this->findRoles();
     }
 
     public function findAllBySelect()
@@ -253,8 +236,35 @@ class RoleModel implements RoleModelInterface
         $resultSet = $statement->execute();
         $rolePermissions = iterator_to_array($resultSet);
         $statement->getResource()->closeCursor();
-
         $row['rolePermissions'] = $rolePermissions;
+
+        // role users
+        // 
+        $sql    = new Sql($this->adapter);
+        $select = $sql->select();
+        $select->columns(
+            [
+                'id' => 'userId',
+            ]
+        );
+        $select->from(['ru' => 'userRoles']);
+        $select->join(['u' => 'users'], 'u.userId = ru.userId',
+            [
+                'firstname',
+                'lastname',
+                'email',
+                'active',
+                'createdAt',
+            ],
+        $select::JOIN_LEFT);
+        $select->where(['ru.roleId' => $roleId]);
+        // echo $select->getSqlString($this->adapter->getPlatform());
+        // die;
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+        $roleUsers = iterator_to_array($resultSet);
+        $statement->getResource()->closeCursor();
+        $row['roleUsers'] = empty($roleUsers) ? [] : $roleUsers;
         return $row;
     }
 
@@ -317,7 +327,7 @@ class RoleModel implements RoleModelInterface
 
     private function deleteCache() : void
     {
-        $this->cache->removeItem(CACHE_ROOT_KEY.Self::class.':findRoles');
+        $this->cache->removeItem(CACHE_ROOT_KEY.Self::class.':findAll');
         $this->cache->removeItem(CACHE_ROOT_KEY.\Authorization\Model\PermissionModel::class.':findPermissions');
     }    
 

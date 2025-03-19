@@ -7,15 +7,7 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Paginator\Paginator;
 
 interface UserModelInterface
-{
-    /**
-     * Find all user by pagination
-     * 
-     * @param  array  $get query string
-     * @return Paginator object
-     */
-    public function findAllByPaging(array $get): Paginator;
-    
+{    
     /**
      * Find one user by user id
      * 
@@ -33,12 +25,20 @@ interface UserModelInterface
     public function findOneByUsername(string $username);
     
     /**
+     * Find all user by pagination
+     * 
+     * @param  array  $get query string
+     * @return Paginator object
+     */
+    public function findAllByPaging(array $get): Paginator;
+
+    /**
      * Create a user
      * 
      * @param  array  $data schema data
      * @return void
      */
-    public function create(array $data);
+    public function create(array $data) : void;
     
     /**
      * Update a user
@@ -46,7 +46,7 @@ interface UserModelInterface
      * @param  array  $data schema data
      * @return void
      */
-    public function update(array $data);
+    public function update(array $data) : void;
     
     /**
      * Delete a user
@@ -54,7 +54,7 @@ interface UserModelInterface
      * @param  string $userId user id
      * @return void
      */
-    public function delete(string $userId);
+    public function delete(string $userId) : void;
     
     /**
      * Update user password by user id
@@ -63,7 +63,7 @@ interface UserModelInterface
      * @param  string $newPassword new password
      * @return void
      */
-    public function updatePasswordById(string $userId, string $newPassword);
+    public function updatePasswordById(string $userId, string $newPassword) : void;
     
     /**
      * Returns to laminas adapter

@@ -36,7 +36,7 @@ class UserModel implements UserModelInterface
         $this->simpleCache = $simpleCache;
         $this->conn = $this->adapter->getDriver()->getConnection();
     }
-
+    
     public function findAllBySelect()
     {
         $sql = new Sql($this->adapter);
@@ -168,6 +168,35 @@ class UserModel implements UserModelInterface
         $resultSet = $statement->execute();
         $row = $resultSet->current();
         $statement->getResource()->closeCursor();
+
+        // user roles
+        // 
+        $sql    = new Sql($this->adapter);
+        $select = $sql->select();
+        $select->columns(
+            [
+                'id' => 'roleId',
+            ]
+        );
+        $select->from('userRoles');
+        $select->join(['r' => 'roles'], 'r.roleId = userRoles.roleId',
+            [
+                'name' => 'roleName'
+            ],
+        $select::JOIN_LEFT);
+        $select->where(['userId' => $userId]);
+        // echo $select->getSqlString($this->adapter->getPlatform());
+        // die;
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+        $userRoles = iterator_to_array($resultSet);
+
+        $newUserRoles = array();
+        foreach ($userRoles as $key => $val) {
+            $newUserRoles[$key] = ["id" => $val['id'], "name" => $val['name']];
+        }
+        $row['userRoles'] = $newUserRoles;
+        $statement->getResource()->closeCursor();
         return $row;
     }
 
@@ -195,7 +224,7 @@ class UserModel implements UserModelInterface
         return $row;
     }
 
-    public function create(array $data)
+    public function create(array $data) : void
     {
         $userId = $data['id'];
         $data['users']['userId'] = $userId;
@@ -215,7 +244,7 @@ class UserModel implements UserModelInterface
         }
     }
 
-    public function update(array $data)
+    public function update(array $data) : void
     {
         $userId = $data['id'];
         try {
@@ -249,7 +278,7 @@ class UserModel implements UserModelInterface
         }
     }
 
-    public function delete(string $userId)
+    public function delete(string $userId) : void
     {
         try {
             $this->conn->beginTransaction();
@@ -262,7 +291,7 @@ class UserModel implements UserModelInterface
         }
     }
 
-    public function updatePasswordById(string $userId, string $newPassword)
+    public function updatePasswordById(string $userId, string $newPassword) : void
     {
         $password = password_hash($newPassword, PASSWORD_DEFAULT, ['cost' => 10]);
         try {

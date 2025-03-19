@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Authorization\Model;
 
+use Laminas\Paginator\Paginator;
+
 interface RoleModelInterface
 {
     /**
@@ -18,7 +20,7 @@ interface RoleModelInterface
      *
      * @return array List of roles
      */
-    public function findRoles(): ?array;
+    public function findAll(): ?array;
     
     /**
      * Find a role by its roleId.
@@ -27,6 +29,14 @@ interface RoleModelInterface
      * @return array Role details with permissions
      */
     public function findOneById(string $roleId);
+
+    /**
+     * Find all roles by pagination
+     * 
+     * @param  array  $get query string
+     * @return Laminas\Paginator\Paginator
+     */
+    public function findAllByPaging(array $get) : Paginator;
 
     /**
      * Create a new role and its associated permissions.

@@ -50,7 +50,7 @@ class ConfigProvider
                 Handler\FindOneByIdHandler::class => Handler\FindOneByIdHandlerFactory::class,
                 Handler\FindAllHandler::class => Handler\FindAllHandlerFactory::class,
                 Handler\FindAllByPagingHandler::class => Handler\FindAllByPagingHandlerFactory::class,
-
+                
                 // handlers - my account
                 Handler\MyAccount\FindMeHandler::class => Handler\MyAccount\FindMeHandlerFactory::class,
                 Handler\MyAccount\UpdateHandler::class => Handler\MyAccount\UpdateHandlerFactory::class,

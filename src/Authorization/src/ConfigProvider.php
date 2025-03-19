@@ -71,9 +71,11 @@ class ConfigProvider
                     $columnFilters = $container->get(ColumnFiltersInterface::class);
                     $roles = new TableGateway('roles', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
                     $rolePermissions = new TableGateway('rolePermissions', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
+                    $userRoles = new TableGateway('userRoles', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
                     return new Model\RoleModel(
                         $roles,
                         $rolePermissions,
+                        $userRoles,
                         $cacheStorage,
                         $columnFilters
                     );

@@ -58,4 +58,33 @@ class RolesFindOneByIdObject
     *  );
     */
     public $rolePermissions;
+    /**
+    *  @var array
+    *  @OA\Property(
+    *      type="array",
+    *      @OA\Items(
+    *           @OA\Property(
+    *             property="id",
+    *             type="string",
+    *           ),
+    *           @OA\Property(
+    *             property="firstname",
+    *             type="string",
+    *           ),
+    *           @OA\Property(
+    *             property="lastname",
+    *             type="string",
+    *           ),
+    *           @OA\Property(
+    *             property="active",
+    *             type="number",
+    *           ),
+    *           @OA\Property(
+    *             property="createdAt",
+    *             type="string",
+    *           ),
+    *     ),
+    *  );
+    */
+    public $roleUsers;
 }
