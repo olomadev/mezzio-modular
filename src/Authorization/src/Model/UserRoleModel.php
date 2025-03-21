@@ -4,95 +4,87 @@ declare(strict_types=1);
 namespace Authorization\Model;
 
 use Exception;
-use Olobase\Mezzio\ColumnFiltersInterface;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Expression;
 use Laminas\Paginator\Paginator;
 use Laminas\Paginator\Adapter\DbSelect;
-use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGatewayInterface;
-use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
+use Olobase\Mezzio\ColumnFiltersInterface;
 
-class UserRolesModel implements UserRolesModelInterface
+class UserRoleModel implements UserRoleModelInterface
 {
     private $conn;
     private $adapter;
-    private $users;
-    private $cache;
-    private $simpleCache;
-    private $userAvatars;
-    private $columnFilters;
 
     public function __construct(
-        TableGatewayInterface $users,
-        TableGatewayInterface $userAvatars,
-        ColumnFiltersInterface $columnFilters,
-        SimpleCacheInterface $simpleCache
-    ) {
-        $this->adapter = $users->getAdapter();
-        $this->users = $users;
-        $this->userAvatars = $userAvatars;
-        $this->columnFilters = $columnFilters;
-        $this->simpleCache = $simpleCache;
+        private TableGatewayInterface $userRoles,
+        private ColumnFiltersInterface $columnFilters
+    )
+    {        
+        $this->adapter = $userRoles->getAdapter();
         $this->conn = $this->adapter->getDriver()->getConnection();
     }
 
-    /**
-     * A
-     * @param  string $userId [description]
-     * @param  array  $roles  [description]
-     * @return [type]         [description]
-     */
-    public function assignRoles(string $userId, array $roles)
+    public function assignRole(string $userId, string $roleId) : void
     {
-
+        try {
+            $this->conn->beginTransaction();
+            $this->userRoles->insert(['userId' => $userId, 'roleId' => $roleId]);
+            $this->conn->commit();
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            throw $e;
+        }
     }
 
-    public function unassignRoles(string $userId, array $roles)
+    public function unassignRole(string $userId, string $roleId) : void
     {
-
+        try {
+            $this->conn->beginTransaction();
+            $this->userRoles->delete(['userId' => $userId, 'roleId' => $roleId]);
+            $this->conn->commit();
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            throw $e;
+        }
     }
 
-    public function findAllBySelect()
+    public function findAllBySelect(string $roleId)
     {
         $sql = new Sql($this->adapter);
         $select = $sql->select();
-        $select->columns([
-            'id' => 'userId',
-            'firstname',
-            'lastname',
-            'email',
-            'active',
-            'createdAt',
-        ]);
+        $select->columns(
+            [
+                'id' => 'userId',
+                'firstname',
+                'lastname',
+                'email'
+            ]
+        );
         $select->from(['u' => 'users']);
+        $select->join(
+            ['ur' => 'userRoles'],
+            'u.userId = ur.userId',
+            [],
+            $select::JOIN_LEFT
+        );
         return $select;
     }
 
     public function findAllByPaging(array $get) : Paginator
     {
-        $select = $this->findAllBySelect();
+        $roleId = $get['roleId'];
+        unset($get['roleId']);
+        $select = $this->findAllBySelect($roleId);
+
         $this->columnFilters->clear();
         $this->columnFilters->setColumns([
             'firstname',
             'lastname',
             'email',
-            'active',
         ]);
-        $this->columnFilters->setLikeColumns(
-            [
-                'firstname',
-                'lastname',
-                'email',
-            ]
-        );
-        $this->columnFilters->setWhereColumns(
-            [
-                'active',
-            ]
-        );
-        $this->columnFilters->setSelect($select);
         $this->columnFilters->setData($get);
+        $this->columnFilters->setSelect($select);
 
         if ($this->columnFilters->searchDataIsNotEmpty()) {
             $nest = $select->where->nest();
@@ -105,40 +97,11 @@ class UserRolesModel implements UserRolesModelInterface
             }
             $nest->unnest();
         }
-        if ($this->columnFilters->likeDataIsNotEmpty()) {
-            foreach ($this->columnFilters->getLikeData() as $column => $value) {
-                if (is_array($value)) {
-                    $nest = $select->where->nest();
-                    foreach ($value as $val) {
-                        $nest->or->like(new Expression($column), '%'.$val.'%');
-                    }
-                    $nest->unnest();
-                } else {
-                    $select->where->like(new Expression($column), '%'.$value.'%');
-                }
-            }   
-        }
-        if ($this->columnFilters->whereDataIsNotEmpty()) {
-            foreach ($this->columnFilters->getWhereData() as $column => $value) {
-                if (is_array($value)) {
-                    $nest = $select->where->nest();
-                    foreach ($value as $val) {
-                        $nest->or->equalTo(new Expression($column), $val);
-                    }
-                    $nest->unnest();
-                } else {
-                    $select->where->equalTo(new Expression($column), $value);
-                }
-            }
-        }
-        // date filters
-        // 
-        $this->columnFilters->setDateFilter('createdAt');
-        // orders
-        // 
+        $select->where(['ur.roleId' => $roleId]);
+
         if ($this->columnFilters->orderDataIsNotEmpty()) {
             foreach ($this->columnFilters->getOrderData() as $order) {
-                $select->order($order);
+                $select->order(new Expression($order));
             }
         }
         // echo $select->getSqlString($this->adapter->getPlatform());
@@ -150,8 +113,4 @@ class UserRolesModel implements UserRolesModelInterface
         return new Paginator($paginatorAdapter);
     }
 
-    public function getAdapter() : AdapterInterface
-    {
-        return $this->adapter;
-    }
 }

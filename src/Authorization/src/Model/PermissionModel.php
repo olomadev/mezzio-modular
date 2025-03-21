@@ -78,7 +78,6 @@ class PermissionModel implements PermissionModelInterface
             'permId',
             'module',
             'name',
-            'resource',
             'action',
             'route',
             'method',
@@ -104,7 +103,6 @@ class PermissionModel implements PermissionModelInterface
             'method' => new Expression("JSON_OBJECT('id', p.method, 'name', p.method)"),
             'module',
             'name',
-            'resource',
             'route',
         ]);
         $select->from(['p' => 'permissions']);
@@ -118,7 +116,6 @@ class PermissionModel implements PermissionModelInterface
         $this->columnFilters->setColumns([
             'module',
             'name',
-            'resource',
             'action',
             'route',
             'method',
@@ -181,7 +178,6 @@ class PermissionModel implements PermissionModelInterface
             'permId',
             'module',
             'name',
-            'resource',
             'action',
             'route',
             'method',
@@ -248,7 +244,6 @@ class PermissionModel implements PermissionModelInterface
                 'id' => RandomStringHelper::generateUuid(), // create new id
                 'module' => $row['module'],
                 'name' => $row['name'],
-                'resource' => $row['resource'],
                 'action' => ['id' => $row['action']],
                 'route' => $row['route'],
                 'method' => ['id' => $row['method']],

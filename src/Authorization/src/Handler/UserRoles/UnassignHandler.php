@@ -2,39 +2,36 @@
 
 declare(strict_types=1);
 
-namespace Authorization\Handler\Roles;
+namespace Authorization\Handler\UserRoles;
 
-use Authorization\Model\RoleModelInterface;
-use Authorization\Schema\Roles\RoleSave;
-use Authorization\InputFilter\Roles\SaveFilter;
-use Olobase\Mezzio\DataManagerInterface;
+use Authorization\Model\UserRoleModelInterface;
+use Authorization\InputFilter\UserRoles\UnassignRoleFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class CreateHandler implements RequestHandlerInterface
+class UnassignHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private RoleModelInterface $roleModel,
-        private DataManagerInterface $dataManager,
-        private SaveFilter $filter,
+        private UserRoleModelInterface $userRoleModel,        
+        private UnassignRoleFilter $filter,
         private Error $error,
     ) 
     {
     }
     
     /**
-     * @OA\Post(
-     *   path="/authorization/roles/create",
+     * @OA\Put(
+     *   path="/authorization/userRoles/unassign",
      *   tags={"Authorization Roles"},
-     *   summary="Create a new role",
-     *   operationId="authorizationRoles_create",
-     *
+     *   summary="Unassign role",
+     *   operationId="authorizationUserRoles_unassign",
+     *   
      *   @OA\RequestBody(
-     *     description="Create a new role",
-     *     @OA\JsonContent(ref="#/components/schemas/RoleSave"),
+     *     description="Unassign a user role",
+     *     @OA\JsonContent(ref="#/components/schemas/UserRoleAssignment"),
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -47,17 +44,15 @@ class CreateHandler implements RequestHandlerInterface
      *)
      **/
     public function handle(ServerRequestInterface $request): ResponseInterface
-    {
+    {   
         $this->filter->setInputData($request->getParsedBody());
-        $data = array();
-        $response = array();
         if ($this->filter->isValid()) {
-            $this->dataManager->setInputFilter($this->filter);
-            $data = $this->dataManager->getSaveData(RoleSave::class, 'roles');
-            $this->roleModel->create($data);
+            $userId = $this->filter->getValue('userId');
+            $roleId = $this->filter->getValue('roleId');
+            $this->userRoleModel->unassignRole($userId, $roleId);
         } else {
             return new JsonResponse($this->error->getMessages($this->filter), 400);
         }
-        return new JsonResponse($response);     
+        return new JsonResponse([]);
     }
 }

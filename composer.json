@@ -1,27 +1,8 @@
 {
-    "name": "mezzio/mezzio-skeleton",
-    "description": "Laminas mezzio skeleton. Begin developing PSR-15 middleware applications in seconds!",
+    "name": "olobase/root",
     "type": "project",
-    "license": "BSD-3-Clause",
-    "keywords": [
-        "laminas",
-        "mezzio",
-        "skeleton",
-        "middleware",
-        "psr",
-        "psr-7",
-        "psr-11",
-        "psr-15"
-    ],
-    "homepage": "https://mezzio.dev",
-    "support": {
-        "docs": "https://docs.mezzio.dev/mezzio/",
-        "issues": "https://github.com/mezzio/mezzio-skeleton/issues",
-        "source": "https://github.com/mezzio/mezzio-skeleton",
-        "rss": "https://github.com/mezzio/mezzio-skeleton/releases.atom",
-        "chat": "https://laminas.dev/chat",
-        "forum": "https://discourse.laminas.dev"
-    },
+    "keywords": [],
+    "homepage": "https://oloma.dev",
     "config": {
         "sort-packages": true,
         "allow-plugins": {
@@ -48,7 +29,6 @@
     "require": {
         "php": ">=8.1.0",
         "composer/package-versions-deprecated": "^1.10.99",
-        "firebase/php-jwt": "^6.11",
         "laminas/laminas-cache": "^3.0",
         "laminas/laminas-cache-storage-adapter-redis": "^2.10",
         "laminas/laminas-component-installer": "^3.5",
@@ -66,11 +46,10 @@
         "laminas/laminas-stdlib": "^3.6",
         "league/mime-type-detection": "^1.16",
         "mezzio/mezzio": "^3.7",
-        "mezzio/mezzio-authentication": "^1.10",
-        "mezzio/mezzio-authentication-laminasauthentication": "^1.7",
-        "mezzio/mezzio-authorization": "^1.10",
         "mezzio/mezzio-helpers": "^5.7",
         "mezzio/mezzio-laminasrouter": "^3.9.0",
+        "olobase/authentication": "dev-main",
+        "olobase/authorization": "dev-main",
         "olobase/mezzio": "^2.0",
         "predis/predis": "^2.3",
         "ramsey/uuid": "^4.7",
@@ -86,6 +65,22 @@
         "roave/security-advisories": "dev-master",
         "vimeo/psalm": "^5.18"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./src/Authentication",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "./src/Authorization",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Common\\": "src/Common/src",

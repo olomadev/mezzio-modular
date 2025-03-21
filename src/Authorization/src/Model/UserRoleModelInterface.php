@@ -3,23 +3,34 @@ declare(strict_types=1);
 
 namespace Authorization\Model;
 
+use Laminas\Paginator\Paginator;
+
 interface UserRoleModelInterface
 {
     /**
-     * Assign roles to user
+     * Assign new role to user
      * 
      * @param  string $userId user id
-     * @param  array  $roles  role ids
+     * @param  string $roleId role id
      * @return void
      */
-    public function assignRoles(string $userId, array $roles);
+    public function assignRole(string $userId, string $roleId) : void;
 
     /**
-     * Unassign roles from user
-     * 
+     * Un assign role from selected user
+     *
      * @param  string $userId user id
-     * @param  array  $roles  role ids
+     * @param  string $roleId role id
      * @return void
      */
-    public function unassignRoles(string $userId, array $roles);
+    public function unassignRole(string $userId, string $roleId) : void;
+
+    /**
+     * Find all users by pagination and "roleId"
+     * 
+     * @param  array  $get query string
+     * @return Laminas\Paginator\Paginator
+     */
+    public function findAllByPaging(array $get) : Paginator;
+
 }

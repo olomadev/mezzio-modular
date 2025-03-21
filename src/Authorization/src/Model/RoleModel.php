@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Authorization\Model;
 
 use Exception;
-use Olobase\Mezzio\ColumnFiltersInterface;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Expression;
 use Laminas\Paginator\Paginator;
@@ -12,6 +11,7 @@ use Laminas\Paginator\Adapter\DbSelect;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Db\TableGateway\TableGatewayInterface;
+use Olobase\Mezzio\ColumnFiltersInterface;
 
 class RoleModel implements RoleModelInterface
 {

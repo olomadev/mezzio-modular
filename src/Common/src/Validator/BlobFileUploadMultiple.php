@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Common\Validator;
 
+use Exception;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Laminas\Validator\AbstractValidator;
-use Exception;
 
 /**
  * Validate multiple file input array

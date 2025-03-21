@@ -61,11 +61,13 @@ class ConfigProvider
                     $dbAdapter = $container->get(AdapterInterface::class);
                     $users = new TableGateway('users', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
                     $userAvatars = new TableGateway('userAvatars', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
+                    $userRoles = new TableGateway('userRoles', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
                     $columnFilters = $container->get(ColumnFiltersInterface::class);
                     $simpleCache = $container->get(SimpleCacheInterface::class);
                     return new Model\UserModel(
                         $users,
                         $userAvatars,
+                        $userRoles,
                         $columnFilters,
                         $simpleCache
                     );

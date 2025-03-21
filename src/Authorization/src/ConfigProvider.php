@@ -31,12 +31,10 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'input_filters' => $this->getInputFilters(),
+            'translator' => $this->getTranslations(),
         ];
     }
 
-    /**
-     * Returns the container dependencies
-     */
     public function getDependencies() : array
     {
         return [
@@ -55,6 +53,11 @@ class ConfigProvider
                 Handler\Roles\FindOneByIdHandler::class => Handler\Roles\FindOneByIdHandlerFactory::class,
                 Handler\Roles\FindAllHandler::class => Handler\Roles\FindAllHandlerFactory::class,
                 Handler\Roles\FindAllByPagingHandler::class => Handler\Roles\FindAllByPagingHandlerFactory::class,
+
+                // handlers - user roles
+                Handler\UserRoles\AssignHandler::class => Handler\UserRoles\AssignHandlerFactory::class,
+                Handler\UserRoles\UnassignHandler::class => Handler\UserRoles\UnassignHandlerFactory::class,
+                Handler\UserRoles\FindAllByPagingHandler::class => Handler\UserRoles\FindAllByPagingHandlerFactory::class,
 
                 // handlers - permissions
                 Handler\Permissions\CopyHandler::class => Handler\Permissions\CopyHandlerFactory::class,
@@ -80,6 +83,12 @@ class ConfigProvider
                         $columnFilters
                     );
                 },
+                Model\UserRoleModelInterface::Class => function ($container) {
+                    $dbAdapter = $container->get(AdapterInterface::class);
+                    $columnFilters = $container->get(ColumnFiltersInterface::class);
+                    $userRoles = new TableGateway('userRoles', $dbAdapter, null, new ResultSet(ResultSet::TYPE_ARRAY));
+                    return new Model\UserRoleModel($userRoles, $columnFilters);
+                },
                 PermissionModelInterface::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);
                     $cacheStorage = $container->get(StorageInterface::class);
@@ -94,10 +103,7 @@ class ConfigProvider
             ],
         ];
     }
-    
-    /**
-     * Returns the input filter dependencies
-     */
+
     public function getInputFilters() : array
     {
         return [
@@ -108,13 +114,26 @@ class ConfigProvider
                 // Roles
                 InputFilter\Roles\SaveFilter::class => InputFilter\Roles\SaveFilterFactory::class,
                 InputFilter\Roles\DeleteFilter::class => InputFilter\Roles\DeleteFilterFactory::class,
+                // UserRoles
+                InputFilter\UserRoles\AssignRoleFilter::class => InputFilter\UserRoles\AssignRoleFilterFactory::class,
+                InputFilter\UserRoles\UnassignRoleFilter::class => InputFilter\UserRoles\UnassignRoleFilterFactory::class,
             ]
         ];
     }
 
-    /**
-     * Registers routes for the module
-     */
+    public function getTranslations()
+    {
+        return [
+            'translation_file_patterns' => [
+                [
+                    'type' => 'PhpArray',
+                    'base_dir' => __DIR__ . '/../i18n',
+                    'pattern' => '%s/messages.php',
+                ]
+            ],
+        ];
+    }
+
     public static function registerRoutes(Application $app, ContainerInterface $container): void
     {
         (require __DIR__ . '/../config/routes.php')($app, $container);

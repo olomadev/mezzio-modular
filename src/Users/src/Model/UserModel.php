@@ -17,21 +17,21 @@ class UserModel implements UserModelInterface
 {
     private $conn;
     private $adapter;
-    private $users;
-    private $cache;
-    private $simpleCache;
-    private $userAvatars;
-    private $columnFilters;
+    private $rolesFunction;
+
+    public const DEFAULT_USER_ROLE_ID = 'c87e615c-dd9c-4ecd-bcd7-de38dac2f39f';
 
     public function __construct(
-        TableGatewayInterface $users,
-        TableGatewayInterface $userAvatars,
-        ColumnFiltersInterface $columnFilters,
-        SimpleCacheInterface $simpleCache
+        private TableGatewayInterface $users,
+        private TableGatewayInterface $userAvatars,
+        private TableGatewayInterface $userRoles,
+        private ColumnFiltersInterface $columnFilters,
+        private SimpleCacheInterface $simpleCache
     ) {
         $this->adapter = $users->getAdapter();
         $this->users = $users;
         $this->userAvatars = $userAvatars;
+        $this->userRoles = $userRoles;
         $this->columnFilters = $columnFilters;
         $this->simpleCache = $simpleCache;
         $this->conn = $this->adapter->getDriver()->getConnection();
@@ -39,6 +39,43 @@ class UserModel implements UserModelInterface
     
     public function findAllBySelect()
     {
+        $platform = $this->adapter->getPlatform();
+        $roles = "JSON_ARRAYAGG(";
+        $roles.= "JSON_OBJECT(";
+        $roles.= "'id' , r.roleId , ";
+        $roles.= "'name' , r.roleName ";
+        $roles.= "))";
+        $this->rolesFunction = $platform->quoteIdentifierInFragment(
+            "(SELECT $roles FROM userRoles ur LEFT JOIN roles r ON r.roleId = ur.roleId WHERE ur.userId = u.userId)",
+            [
+                '(',
+                ')',
+                '/',
+                'u',
+                'ur',
+                'roleId',
+                'userId',
+                'id',
+                'name',
+                'SELECT',
+                'FROM',
+                'AS',
+                ',',
+                '[',
+                ']',
+                'JSON_ARRAYAGG',
+                'JSON_OBJECT',
+                'WHERE',
+                'ORDER',
+                'BY',
+                'ASC',
+                ';',
+                'CONCAT',
+                '"',
+                '\'',
+                '\"', '=', '?', 'JOIN', 'ON', 'AND', 'LEFT', ','
+            ]
+        );
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select->columns([
@@ -48,6 +85,7 @@ class UserModel implements UserModelInterface
             'email',
             'active',
             'createdAt',
+            'userRoles' => new Expression($this->rolesFunction),            
         ]);
         $select->from(['u' => 'users']);
         return $select;
@@ -168,35 +206,6 @@ class UserModel implements UserModelInterface
         $resultSet = $statement->execute();
         $row = $resultSet->current();
         $statement->getResource()->closeCursor();
-
-        // user roles
-        // 
-        $sql    = new Sql($this->adapter);
-        $select = $sql->select();
-        $select->columns(
-            [
-                'id' => 'roleId',
-            ]
-        );
-        $select->from('userRoles');
-        $select->join(['r' => 'roles'], 'r.roleId = userRoles.roleId',
-            [
-                'name' => 'roleName'
-            ],
-        $select::JOIN_LEFT);
-        $select->where(['userId' => $userId]);
-        // echo $select->getSqlString($this->adapter->getPlatform());
-        // die;
-        $statement = $sql->prepareStatementForSqlObject($select);
-        $resultSet = $statement->execute();
-        $userRoles = iterator_to_array($resultSet);
-
-        $newUserRoles = array();
-        foreach ($userRoles as $key => $val) {
-            $newUserRoles[$key] = ["id" => $val['id'], "name" => $val['name']];
-        }
-        $row['userRoles'] = $newUserRoles;
-        $statement->getResource()->closeCursor();
         return $row;
     }
 
@@ -237,6 +246,7 @@ class UserModel implements UserModelInterface
             if (! empty($data['avatar']['image'])) {
                 $this->userAvatars->insert(['userId' => $userId, 'avatarImage' => $data['avatar']['image']]);
             }
+            $this->userRoles->insert(['userId' => $userId, 'roleId' => Self::DEFAULT_USER_ROLE_ID]);
             $this->conn->commit();
         } catch (Exception $e) {
             $this->conn->rollback();

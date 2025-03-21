@@ -71,7 +71,7 @@ class TokenHandler implements RequestHandlerInterface
         $this->filter->setInputData($request->getParsedBody());
         if ($this->filter->isValid()) {
             try {
-                $user = $this->authentication->createUser($request);                
+                $user = $this->authentication->createUser($request);           
                 if (null !== $user) {
                     $request = $request->withAttribute(UserInterface::class, $user);
                     $encoded = $this->authentication->getTokenModel()->create($request);

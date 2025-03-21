@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Authorization\Handler\Roles;
+namespace Authorization\Handler\UserRoles;
 
-use Authorization\Model\RoleModelInterface;
-use Authorization\Schema\Roles\RoleSave;
-use Authorization\InputFilter\Roles\SaveFilter;
+use Authorization\Model\UserRoleModelInterface;
+use Authorization\Schema\UserRoles\UserRoleAssignment;
+use Authorization\InputFilter\UserRoles\AssignRoleFilter;
 use Olobase\Mezzio\DataManagerInterface;
 use Olobase\Mezzio\Error\ErrorWrapperInterface as Error;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -14,27 +14,27 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class CreateHandler implements RequestHandlerInterface
+class AssignHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private RoleModelInterface $roleModel,
+        private UserRoleModelInterface $userRoleModel,
         private DataManagerInterface $dataManager,
-        private SaveFilter $filter,
+        private AssignRoleFilter $filter,
         private Error $error,
     ) 
     {
     }
     
     /**
-     * @OA\Post(
-     *   path="/authorization/roles/create",
+     * @OA\Put(
+     *   path="/authorization/userRoles/assign",
      *   tags={"Authorization Roles"},
-     *   summary="Create a new role",
-     *   operationId="authorizationRoles_create",
+     *   summary="Assing a role for user",
+     *   operationId="authorizationUserRoles_assign",
      *
      *   @OA\RequestBody(
-     *     description="Create a new role",
-     *     @OA\JsonContent(ref="#/components/schemas/RoleSave"),
+     *     description="Assign a new user role",
+     *     @OA\JsonContent(ref="#/components/schemas/UserRoleAssignment"),
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -53,8 +53,10 @@ class CreateHandler implements RequestHandlerInterface
         $response = array();
         if ($this->filter->isValid()) {
             $this->dataManager->setInputFilter($this->filter);
-            $data = $this->dataManager->getSaveData(RoleSave::class, 'roles');
-            $this->roleModel->create($data);
+            $data = $this->dataManager->getSaveData(UserRoleAssignment::class, 'userRoles');
+            $userId = $data['userRoles']['userId'];
+            $roleId = $data['userRoles']['roleId'];
+            $this->userRoleModel->assignRole($userId, $roleId);
         } else {
             return new JsonResponse($this->error->getMessages($this->filter), 400);
         }

@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Authorization\Handler\Roles;
+namespace Authorization\Handler\UserRoles;
 
-use Authorization\Model\RoleModelInterface;
-use Authorization\InputFilter\Roles\DeleteFilter;
+use Authorization\Model\UserRoleModelInterface;
+use Authorization\InputFilter\UserRoles\UnassignRoleFilter;
 use Olobase\Mezzio\Error\ErrorWrapperInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Laminas\InputFilter\InputFilterPluginManager;
 
-class DeleteHandlerFactory
+class UnassignHandlerFactory
 {
     public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         $pluginManager = $container->get(InputFilterPluginManager::class);
-        $inputFilter   = $pluginManager->get(DeleteFilter::class);
+        $inputFilter   = $pluginManager->get(UnassignRoleFilter::class);
 
-        return new DeleteHandler(
-            $container->get(RoleModelInterface::class),
+        return new UnassignHandler(
+            $container->get(UserRoleModelInterface::class),
             $inputFilter,
             $container->get(ErrorWrapperInterface::class)
         );
