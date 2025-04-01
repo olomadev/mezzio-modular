@@ -95,22 +95,27 @@ class UserModel implements UserModelInterface
     {
         $select = $this->findAllBySelect();
         $this->columnFilters->clear();
+        $this->columnFilters->setAlias('userRoles', new Expression($this->rolesFunction));
         $this->columnFilters->setColumns([
             'firstname',
             'lastname',
             'email',
+            'userRoles',
             'active',
+            'createdAt',
         ]);
         $this->columnFilters->setLikeColumns(
             [
                 'firstname',
                 'lastname',
+                'userRoles',
                 'email',
             ]
         );
         $this->columnFilters->setWhereColumns(
             [
                 'active',
+                'createdAt',
             ]
         );
         $this->columnFilters->setSelect($select);
@@ -160,7 +165,7 @@ class UserModel implements UserModelInterface
         // 
         if ($this->columnFilters->orderDataIsNotEmpty()) {
             foreach ($this->columnFilters->getOrderData() as $order) {
-                $select->order($order);
+                $select->order(new Expression($order));
             }
         }
         // echo $select->getSqlString($this->adapter->getPlatform());

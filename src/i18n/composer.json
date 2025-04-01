@@ -1,0 +1,12 @@
+{
+    "name": "olobase/i18n",
+    "description": "i18n Module for Olobase App",
+    "type": "library",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "laminas/laminas-i18n": "^2.29",
+        "laminas/laminas-i18n-resources": "^2.11",
+        "laminas/laminas-mvc-i18n": "^1.9"
+    }
+}

@@ -121,7 +121,7 @@ class ConfigProvider
         ];
     }
 
-    public function getTranslations()
+    public function getTranslations() : array
     {
         return [
             'translation_file_patterns' => [

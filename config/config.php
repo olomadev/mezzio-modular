@@ -13,6 +13,9 @@ $cacheConfig = [
 
 // Let's merge the configuration with ConfigAggregator
 $aggregator = new ConfigAggregator([
+  \Laminas\Mvc\I18n\ConfigProvider::class,
+  \Laminas\I18n\ConfigProvider::class,
+  \i18n\ConfigProvider::class,
   \Olobase\Mezzio\ConfigProvider::class,
   \Mezzio\Authentication\LaminasAuthentication\ConfigProvider::class,
   \Mezzio\Authorization\ConfigProvider::class,
@@ -25,8 +28,6 @@ $aggregator = new ConfigAggregator([
   \Laminas\Serializer\ConfigProvider::class,
   \Laminas\Cache\ConfigProvider::class,
   \Laminas\Cache\Storage\Adapter\Redis\ConfigProvider::class,
-  \Laminas\I18n\ConfigProvider::class,
-  \Laminas\Mvc\I18n\ConfigProvider::class,
   \Laminas\InputFilter\ConfigProvider::class,
   \Laminas\Filter\ConfigProvider::class,
   \Authorization\ConfigProvider::class,

@@ -5,5 +5,6 @@ return [
     'Authorization',
     'Users',
     'Categories',
-    'Modules'
+    'Modules',
+    'i18n'
 ];

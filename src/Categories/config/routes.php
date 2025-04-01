@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Mezzio\Application;
 use Psr\Container\ContainerInterface;
-use Authentication\Handler\SessionUpdateHandler;
 use Authentication\Middleware\JwtAuthenticationMiddleware;
 
 return function (Application $app, ContainerInterface $container) {

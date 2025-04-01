@@ -218,7 +218,6 @@ class RoleModel implements RoleModelInterface
                 'permId',
                 'route',
                 'action',
-                'resource',
                 'name',
                 'module',
                 'method',

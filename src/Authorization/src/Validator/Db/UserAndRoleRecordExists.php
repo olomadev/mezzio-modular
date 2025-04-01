@@ -12,6 +12,12 @@ use Laminas\Validator\Db\AbstractDb;
  */
 class UserAndRoleRecordExists extends AbstractDb
 {
+    const ERROR_USER_ROLE_NOT_EXISTS = 'userAndRoleRecordNotExists';
+
+    protected $messageTemplates = [
+        self::ERROR_USER_ROLE_NOT_EXISTS => 'User and role record not exists',
+    ];
+
     public function isValid($value)
     {
         /*
@@ -27,7 +33,7 @@ class UserAndRoleRecordExists extends AbstractDb
         $result = $this->query($value);
         if (! $result) {
             $valid = false;
-            $this->error(Self::ERROR_NO_RECORD_FOUND);
+            $this->error(Self::ERROR_USER_ROLE_NOT_EXISTS);
         }
 
         return $valid;

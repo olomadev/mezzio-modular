@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4500d8c4f1733c10275d61f7afc31d9e",
+    "content-hash": "fec38a402bdfe50d366202a5271126d9",
     "packages": [
         {
             "name": "brick/math",
@@ -3080,17 +3080,37 @@
             }
         },
         {
+            "name": "olobase/i18n",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./src/i18n",
+                "reference": "838dd926cf0593eb9fcb72e5bf49492df15890f4"
+            },
+            "require": {
+                "laminas/laminas-i18n": "^2.29",
+                "laminas/laminas-i18n-resources": "^2.11",
+                "laminas/laminas-mvc-i18n": "^1.9"
+            },
+            "type": "library",
+            "description": "i18n Module for Olobase App",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "olobase/mezzio",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/olomadev/olobase-mezzio.git",
-                "reference": "c8aef05d69684f9d91a75857cafdfcff7780974c"
+                "reference": "4ac0f1c0dd69d6f95acb2ffde4f1606140256c07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/olomadev/olobase-mezzio/zipball/c8aef05d69684f9d91a75857cafdfcff7780974c",
-                "reference": "c8aef05d69684f9d91a75857cafdfcff7780974c",
+                "url": "https://api.github.com/repos/olomadev/olobase-mezzio/zipball/4ac0f1c0dd69d6f95acb2ffde4f1606140256c07",
+                "reference": "4ac0f1c0dd69d6f95acb2ffde4f1606140256c07",
                 "shasum": ""
             },
             "require": {
@@ -3122,9 +3142,9 @@
             ],
             "support": {
                 "issues": "https://github.com/olomadev/olobase-mezzio/issues",
-                "source": "https://github.com/olomadev/olobase-mezzio/tree/2.0.1"
+                "source": "https://github.com/olomadev/olobase-mezzio/tree/2.0.2"
             },
-            "time": "2025-03-21T17:34:34+00:00"
+            "time": "2025-03-22T15:00:19+00:00"
         },
         {
             "name": "predis/predis",
@@ -3656,16 +3676,16 @@
         },
         {
             "name": "ramsey/collection",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/collection.git",
-                "reference": "3c5990b8a5e0b79cd1cf11c2dc1229e58e93f109"
+                "reference": "344572933ad0181accbf4ba763e85a0306a8c5e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/collection/zipball/3c5990b8a5e0b79cd1cf11c2dc1229e58e93f109",
-                "reference": "3c5990b8a5e0b79cd1cf11c2dc1229e58e93f109",
+                "url": "https://api.github.com/repos/ramsey/collection/zipball/344572933ad0181accbf4ba763e85a0306a8c5e2",
+                "reference": "344572933ad0181accbf4ba763e85a0306a8c5e2",
                 "shasum": ""
             },
             "require": {
@@ -3726,9 +3746,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/collection/issues",
-                "source": "https://github.com/ramsey/collection/tree/2.1.0"
+                "source": "https://github.com/ramsey/collection/tree/2.1.1"
             },
-            "time": "2025-03-02T04:48:29+00:00"
+            "time": "2025-03-22T05:38:12+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -6431,12 +6451,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "af199f9f0a8c465dd03b06977d83d5b5cbe32a3a"
+                "reference": "786548323f3a9452244ddf83672e34c260d6b717"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/af199f9f0a8c465dd03b06977d83d5b5cbe32a3a",
-                "reference": "af199f9f0a8c465dd03b06977d83d5b5cbe32a3a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/786548323f3a9452244ddf83672e34c260d6b717",
+                "reference": "786548323f3a9452244ddf83672e34c260d6b717",
                 "shasum": ""
             },
             "conflict": {
@@ -7113,7 +7133,7 @@
                 "t3/dce": "<0.11.5|>=2.2,<2.6.2",
                 "t3g/svg-sanitizer": "<1.0.3",
                 "t3s/content-consent": "<1.0.3|>=2,<2.0.2",
-                "tastyigniter/tastyigniter": "<3.3",
+                "tastyigniter/tastyigniter": "<4",
                 "tcg/voyager": "<=1.8",
                 "tecnickcom/tc-lib-pdf-font": "<2.6.4",
                 "tecnickcom/tcpdf": "<6.8",
@@ -7302,7 +7322,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-19T17:05:08+00:00"
+            "time": "2025-03-21T18:06:15+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -9439,6 +9459,7 @@
     "stability-flags": {
         "olobase/authentication": 20,
         "olobase/authorization": 20,
+        "olobase/i18n": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

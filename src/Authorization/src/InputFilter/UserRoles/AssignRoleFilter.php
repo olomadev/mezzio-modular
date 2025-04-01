@@ -28,7 +28,6 @@ class AssignRoleFilter extends InputFilter
                 ['name' => Uuid::class],
             ],
         ]);
-
         $this->add([
             'name' => 'roleId',
             'required' => true,

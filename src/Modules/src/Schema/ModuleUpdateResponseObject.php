@@ -5,7 +5,7 @@ namespace Modules\Schema;
 /**
  * @OA\Schema()
  */
-class OldRecordObject
+class ModuleUpdateResponseObject
 {
     /**
      * @var string

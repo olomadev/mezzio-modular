@@ -80,8 +80,6 @@ class JwtAuthentication implements AuthenticationInterface
         $this->roleModel = $roleModel;
         $this->events = $events;
         $this->userFactory = $userFactory;
-
-        // var_dump($userFactory);
         $this->ipAddress = RequestHelper::getRealUserIp();
     }
 

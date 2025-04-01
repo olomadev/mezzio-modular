@@ -10,7 +10,7 @@ class ModuleUpdateResponse
     /**
      * @var object
      * @OA\Property(
-     *     ref="#/components/schemas/OldRecordObject",
+     *     ref="#/components/schemas/ModuleOldRecordObject",
      * )
      */
     public $oldRecord;

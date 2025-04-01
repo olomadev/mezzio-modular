@@ -92,14 +92,14 @@ class PermissionModel implements PermissionModelInterface
         return $permissions;
     }
 
-    public function findAll()
+    public function findAllBySelect()
     {
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select->columns([
             'id' => 'permId',
             // 'groupName' => 'moduleName',
-            'action' => new Expression("JSON_OBJECT('id', p.action, 'name', p.action)"),
+            'action' => new Expression("JSON_OBJECT('id', p.action, 'name', CONCAT(UPPER(SUBSTRING(p.action, 1, 1)), LOWER(SUBSTRING(p.action, 2))))"),
             'method' => new Expression("JSON_OBJECT('id', p.method, 'name', p.method)"),
             'module',
             'name',
@@ -111,7 +111,7 @@ class PermissionModel implements PermissionModelInterface
 
     public function findAllByPaging(array $get)
     {
-        $select = $this->findAll();
+        $select = $this->findAllBySelect();
         $this->columnFilters->clear();
         $this->columnFilters->setColumns([
             'module',
